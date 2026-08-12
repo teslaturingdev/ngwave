@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:docs": "ng build docs",
+    "build:lib": "ng build ngwave-ui",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -21,9 +23,16 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@angular/build": "^22.1.3",
     "@angular/cli": "^22.1.3",
     "@angular/compiler-cli": "^22.1.0",
+    "autoprefixer": "^10.5.4",
+    "jsdom": "^28.0.0",
+    "ng-packagr": "^22.1.0",
+    "postcss": "^8.5.26",
     "prettier": "^3.8.1",
-    "typescript": "~6.0.2"
+    "tailwindcss": "^3.4.19",
+    "typescript": "~6.0.2",
+    "vitest": "^4.0.8"
   }
 }

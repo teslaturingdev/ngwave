@@ -42,3 +42,6 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Compiled migrate tool output (imported from source via tsconfig path alias)
+/projects/ngwave-migrate/dist/

@@ -7,6 +7,10 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@ngwave/ui": ["./projects/ngwave-ui/src/public-api.ts"],
+      "@ngwave/migrate": ["./projects/ngwave-migrate/src/index.ts"]
+    },
     "skipLibCheck": true,
     "isolatedModules": true,
     "experimentalDecorators": true,
@@ -19,5 +23,19 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true
   },
-  "files": []
+  "files": [],
+  "references": [
+    {
+      "path": "./projects/ngwave-ui/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ngwave-ui/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/docs/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/docs/tsconfig.spec.json"
+    }
+  ]
 }

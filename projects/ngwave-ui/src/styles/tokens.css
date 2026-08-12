@@ -1,0 +1,89 @@
+/*
+ * NgWave design tokens.
+ * Colors are stored as space-separated RGB triplets so Tailwind can apply
+ * opacity via `rgb(var(--nw-500) / <alpha-value>)`.
+ * Light theme lives on :root; dark theme overrides under [data-theme="dark"].
+ */
+
+:root {
+  /* Brand (indigo) */
+  --nw-50: 238 242 255;
+  --nw-100: 224 231 255;
+  --nw-200: 199 210 254;
+  --nw-300: 165 180 252;
+  --nw-400: 129 140 248;
+  --nw-500: 99 102 241;
+  --nw-600: 79 70 229;
+  --nw-700: 67 56 202;
+  --nw-800: 55 48 163;
+  --nw-900: 49 46 129;
+  --nw-950: 30 27 75;
+
+  /* Surface (slate) — 0 = page background, 950 = strongest text */
+  --surface-0: 255 255 255;
+  --surface-50: 248 250 252;
+  --surface-100: 241 245 249;
+  --surface-200: 226 232 240;
+  --surface-300: 203 213 225;
+  --surface-400: 148 163 184;
+  --surface-500: 100 116 139;
+  --surface-600: 71 85 105;
+  --surface-700: 51 65 85;
+  --surface-800: 30 41 59;
+  --surface-900: 15 23 42;
+  --surface-950: 2 6 23;
+
+  /* Shape */
+  --nw-radius: 0.625rem;
+  --nw-radius-lg: 0.875rem;
+
+  /* Elevation — slate-tinted, layered soft shadows for real depth */
+  --nw-shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.06);
+  --nw-shadow: 0 1px 3px 0 rgb(15 23 42 / 0.08),
+    0 1px 2px -1px rgb(15 23 42 / 0.06);
+  --nw-shadow-md: 0 4px 14px -2px rgb(15 23 42 / 0.1),
+    0 2px 6px -2px rgb(15 23 42 / 0.06);
+  --nw-shadow-lg: 0 12px 30px -6px rgb(15 23 42 / 0.14),
+    0 6px 12px -6px rgb(15 23 42 / 0.08);
+  --nw-shadow-xl: 0 24px 50px -12px rgb(15 23 42 / 0.24);
+  /* Colored glow used on primary/accent elements */
+  --nw-glow: 0 6px 20px -4px rgb(79 70 229 / 0.35);
+
+  /* Motion */
+  --nw-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --nw-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --nw-duration: 200ms;
+}
+
+/* Dark theme: invert the surface scale so semantic usage stays consistent. */
+[data-theme='dark'] {
+  --surface-0: 2 6 23;
+  --surface-50: 15 23 42;
+  --surface-100: 30 41 59;
+  --surface-200: 51 65 85;
+  --surface-300: 71 85 105;
+  --surface-400: 100 116 139;
+  --surface-500: 148 163 184;
+  --surface-600: 203 213 225;
+  --surface-700: 226 232 240;
+  --surface-800: 241 245 249;
+  --surface-900: 248 250 252;
+  --surface-950: 255 255 255;
+
+  /* Elevation — deeper in dark mode, with a faint top highlight ring */
+  --nw-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --nw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+  --nw-shadow-md: 0 4px 14px -2px rgb(0 0 0 / 0.55),
+    0 2px 6px -2px rgb(0 0 0 / 0.4);
+  --nw-shadow-lg: 0 12px 30px -6px rgb(0 0 0 / 0.6),
+    0 6px 12px -6px rgb(0 0 0 / 0.45);
+  --nw-shadow-xl: 0 24px 50px -12px rgb(0 0 0 / 0.7);
+  --nw-glow: 0 6px 24px -4px rgb(99 102 241 / 0.5);
+}
+
+/* Respect users who prefer less motion — neutralize NgWave animations only. */
+@media (prefers-reduced-motion: reduce) {
+  [class*='animate-nw-'] {
+    animation: none !important;
+  }
+}

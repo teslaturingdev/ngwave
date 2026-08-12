@@ -1,0 +1,46 @@
+{
+  "name": "@ngwave/ui",
+  "version": "0.6.0",
+  "files": [
+    "fesm2022",
+    "types",
+    "styles",
+    "tailwind.config.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "description": "Open-source Angular 22 UI component library — a free alternative to PrimeNG, built on the Signals API.",
+  "keywords": [
+    "angular",
+    "angular-components",
+    "ui",
+    "ui-components",
+    "component-library",
+    "signals",
+    "datatable",
+    "primeng-alternative",
+    "tailwind"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ngwave/ui#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngwave/ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ngwave/ui/issues"
+  },
+  "peerDependencies": {
+    "@angular/common": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "exports": {
+    "./styles/*": "./styles/*",
+    "./tailwind.config.js": "./tailwind.config.js"
+  }
+}

@@ -1,0 +1,31 @@
+import { Routes } from '@angular/router';
+import { HomeComponent } from './pages/home.component';
+import { ButtonPageComponent } from './pages/button.page';
+import { DataTablePageComponent } from './pages/data-table.page';
+import { DialogPageComponent } from './pages/dialog.page';
+import { DropdownPageComponent } from './pages/dropdown.page';
+import { MigratePageComponent } from './pages/migrate.page';
+import { CheckboxDocPageComponent } from './pages/checkbox.page';
+import { SpinnerDocPageComponent } from './pages/spinner.page';
+import { TabsDocPageComponent } from './pages/tabs.page';
+import { ToastPageComponent } from './pages/toast.page';
+import { InputDocPageComponent } from './pages/input.page';
+import { AutocompleteDocPageComponent } from './pages/autocomplete.page';
+import { ChangelogPageComponent } from './pages/changelog.page';
+
+export const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'migrate', component: MigratePageComponent },
+  { path: 'changelog', component: ChangelogPageComponent },
+  { path: 'components/button', component: ButtonPageComponent },
+  { path: 'components/data-table', component: DataTablePageComponent },
+  { path: 'components/dropdown', component: DropdownPageComponent },
+  { path: 'components/autocomplete', component: AutocompleteDocPageComponent },
+  { path: 'components/input', component: InputDocPageComponent },
+  { path: 'components/dialog', component: DialogPageComponent },
+  { path: 'components/toast', component: ToastPageComponent },
+  { path: 'components/tabs', component: TabsDocPageComponent },
+  { path: 'components/checkbox', component: CheckboxDocPageComponent },
+  { path: 'components/spinner', component: SpinnerDocPageComponent },
+  { path: '**', redirectTo: '' },
+];
