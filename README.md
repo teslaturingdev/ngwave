@@ -1,59 +1,62 @@
-# Ngwave
+# NgWave
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.3.
+**The open-source, Signals-first alternative to PrimeNG for Angular 22.**
 
-## Development server
+NgWave is a modern Angular UI component library plus an AI-assisted migration
+tool for moving PrimeNG apps over. Free forever, built entirely on the Angular
+Signals API, and themeable from a single set of design tokens.
 
-To start a local development server, run:
+- 📦 **`@ngwave/ui`** — 12 fully-featured components with a shipped Tailwind
+  preset, design tokens, and a motion/elevation system.
+- 🔀 **`@ngwave/migrate`** — a deterministic PrimeNG → NgWave codemod that
+  rewrites your templates and reports exactly what mapped, what needs a look,
+  and what isn't supported yet.
+- 📚 **docs** — a dogfooding showcase site (built with `@ngwave/ui` itself)
+  with live demos, an API reference, a changelog, and an in-browser Migrate tool.
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Install
 
 ```bash
-ng generate --help
+npm install @ngwave/ui
 ```
 
-## Building
+Then extend the shipped Tailwind preset and import the design tokens — see
+[`projects/ngwave-ui/README.md`](projects/ngwave-ui/README.md) for setup.
 
-To build the project run:
+## Components
+
+Button · DataTable · Dropdown · Autocomplete · InputText / InputNumber /
+Textarea · Dialog (+ `ConfirmationService`) · Toast · Tabs · Checkbox / Radio ·
+Spinner / Skeleton. All form controls implement `ControlValueAccessor`.
+
+## Repository layout
+
+This is an Angular CLI multi-project workspace:
+
+| Path | What it is |
+| --- | --- |
+| `projects/ngwave-ui/` | The component library — npm package `@ngwave/ui`. |
+| `projects/ngwave-migrate/` | The PrimeNG → NgWave migration codemod. |
+| `projects/docs/` | The showcase / documentation site. |
+
+Path aliases resolve `@ngwave/ui` and `@ngwave/migrate` to their source, so the
+docs app builds straight from source with no pre-build step.
+
+## Develop
 
 ```bash
-ng build
+npm install
+npm start            # run the docs site (ng serve docs)
+npm run build:lib    # package @ngwave/ui via ng-packagr
+npm test             # unit tests
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+The migration tool has its own vitest suite:
 
 ```bash
-ng test
+npx vitest run --root projects/ngwave-migrate
 ```
 
-## Running end-to-end tests
+## License
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+[MIT](LICENSE)
