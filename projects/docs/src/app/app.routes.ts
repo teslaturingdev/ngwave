@@ -4,7 +4,6 @@ import { ButtonPageComponent } from './pages/button.page';
 import { DataTablePageComponent } from './pages/data-table.page';
 import { DialogPageComponent } from './pages/dialog.page';
 import { DropdownPageComponent } from './pages/dropdown.page';
-import { MigratePageComponent } from './pages/migrate.page';
 import { CheckboxDocPageComponent } from './pages/checkbox.page';
 import { SpinnerDocPageComponent } from './pages/spinner.page';
 import { TabsDocPageComponent } from './pages/tabs.page';
@@ -15,7 +14,16 @@ import { ChangelogPageComponent } from './pages/changelog.page';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'migrate', component: MigratePageComponent },
+  {
+    path: 'migrate',
+    loadComponent: () =>
+      import('./pages/migrate.page').then((m) => m.MigratePageComponent),
+  },
+  {
+    path: 'migrate/ai',
+    loadComponent: () =>
+      import('./pages/migrate-ai.page').then((m) => m.MigrateAiPageComponent),
+  },
   { path: 'changelog', component: ChangelogPageComponent },
   { path: 'components/button', component: ButtonPageComponent },
   { path: 'components/data-table', component: DataTablePageComponent },

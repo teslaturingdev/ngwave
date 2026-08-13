@@ -75,8 +75,19 @@
       <a
         routerLink="/migrate"
         routerLinkActive="text-nw-600 font-medium bg-surface-100"
+        [routerLinkActiveOptions]="{ exact: true }"
         class="block px-3 py-1.5 rounded-nw text-sm text-surface-700 hover:bg-surface-100"
         >Migrate</a
+      >
+      <a
+        routerLink="/migrate/ai"
+        routerLinkActive="text-nw-600 font-medium bg-surface-100"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-nw text-sm text-surface-700 hover:bg-surface-100"
+        >Migrate with AI
+        <span
+          class="rounded-full bg-nw-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-nw-700"
+          >AI</span
+        ></a
       >
       <a
         routerLink="/changelog"
