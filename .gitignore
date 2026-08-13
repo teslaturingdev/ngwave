@@ -45,3 +45,13 @@ Thumbs.db
 
 # Compiled migrate tool output (imported from source via tsconfig path alias)
 /projects/ngwave-migrate/dist/
+.vercel
+
+# Secrets & environment — NEVER commit these
+.env
+.env.*
+!.env.example
+*.local
+*.secret
+secrets.*
+*-secrets.env

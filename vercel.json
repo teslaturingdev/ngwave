@@ -2,5 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build:docs",
   "outputDirectory": "dist/docs/browser",
-  "rewrites": [{ "source": "/((?!.*\\.).*)", "destination": "/index.html" }]
+  "functions": { "api/migrate-ai.ts": { "maxDuration": 60 } },
+  "rewrites": [{ "source": "/((?!api/|.*\\.).*)", "destination": "/index.html" }]
 }
