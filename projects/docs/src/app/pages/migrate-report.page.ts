@@ -285,6 +285,82 @@ async function collectFromDataTransfer(dt: DataTransfer): Promise<{ path: string
               Finish with AI →
             </span>
           </a>
+
+          <!-- Lead capture — opt-in, never gates the report above -->
+          <div class="rounded-nw-lg border border-surface-200 bg-surface-0 p-4 shadow-nw-sm">
+            @if (leadSubmitted()) {
+              <div class="py-3 text-center animate-nw-fade-in">
+                <div class="text-2xl">✅</div>
+                <div class="mt-1 font-semibold text-surface-900">Thanks — we'll be in touch.</div>
+                <div class="text-sm text-surface-500">
+                  Got your details, along with this report's summary, so the first reply won't
+                  start from zero.
+                </div>
+              </div>
+            } @else {
+              <div class="font-semibold text-surface-900">
+                Want us to run this migration for you?
+              </div>
+              <div class="mb-3 text-xs text-surface-500">
+                Leave your email and we'll reach out — no obligation, no spam.
+              </div>
+              <form (submit)="submitLead($event)" class="space-y-3">
+                <!-- Honeypot — hidden from real users, bots tend to fill every field -->
+                <input
+                  type="text"
+                  name="company"
+                  tabindex="-1"
+                  autocomplete="off"
+                  class="hidden"
+                  [value]="leadHoneypot()"
+                  (input)="onHoneypot($event)"
+                />
+                <input
+                  type="email"
+                  required
+                  placeholder="you@company.com"
+                  [value]="leadEmail()"
+                  (input)="onLeadEmail($event)"
+                  class="w-full rounded-nw border border-surface-300 bg-surface-0 px-3 py-2 text-sm text-surface-900 shadow-nw-sm transition-[border-color,box-shadow] duration-150 ease-nw placeholder:text-surface-400 hover:border-surface-400 focus:border-nw-500 focus:outline-none focus:ring-4 focus:ring-nw-500/15"
+                />
+                <div class="flex flex-wrap gap-4 text-sm text-surface-600">
+                  @for (opt of destinationOptions; track opt.value) {
+                    <label class="inline-flex items-center gap-1.5">
+                      <input
+                        type="radio"
+                        name="destination"
+                        [checked]="leadDestination() === opt.value"
+                        (change)="leadDestination.set(opt.value)"
+                      />
+                      {{ opt.label }}
+                    </label>
+                  }
+                </div>
+                <textarea
+                  placeholder="Anything else? (optional)"
+                  rows="2"
+                  [value]="leadNote()"
+                  (input)="onLeadNote($event)"
+                  class="w-full resize-y rounded-nw border border-surface-300 bg-surface-0 px-3 py-2 text-sm text-surface-900 shadow-nw-sm transition-[border-color,box-shadow] duration-150 ease-nw placeholder:text-surface-400 hover:border-surface-400 focus:border-nw-500 focus:outline-none focus:ring-4 focus:ring-nw-500/15"
+                ></textarea>
+                @if (leadError()) {
+                  <div class="text-sm text-red-700">{{ leadError() }}</div>
+                }
+                <button
+                  type="submit"
+                  [disabled]="leadSubmitting()"
+                  class="inline-flex items-center gap-2 rounded-nw bg-nw-600 px-4 py-2 text-sm font-medium text-white shadow-nw-sm transition-colors hover:bg-nw-700 disabled:opacity-50"
+                >
+                  @if (leadSubmitting()) {
+                    <nw-spinner [size]="14" variant="current" />
+                    Sending…
+                  } @else {
+                    Request help →
+                  }
+                </button>
+              </form>
+            }
+          </div>
         </div>
       }
     </div>
@@ -298,6 +374,19 @@ export class MigrateReportPageComponent {
   protected readonly report = signal<CostReport | null>(null);
   protected readonly truncated = signal(false);
   protected readonly dragOver = signal(false);
+
+  protected readonly destinationOptions: { value: 'material' | 'ngwave' | 'unsure'; label: string }[] = [
+    { value: 'material', label: 'Angular Material' },
+    { value: 'ngwave', label: 'NgWave' },
+    { value: 'unsure', label: 'Not sure yet' },
+  ];
+  protected readonly leadEmail = signal('');
+  protected readonly leadDestination = signal<'material' | 'ngwave' | 'unsure'>('unsure');
+  protected readonly leadNote = signal('');
+  protected readonly leadHoneypot = signal('');
+  protected readonly leadSubmitting = signal(false);
+  protected readonly leadSubmitted = signal(false);
+  protected readonly leadError = signal('');
 
   protected materialClass(row: ComponentCostRow): string {
     const status = row.material.status;
@@ -347,6 +436,72 @@ export class MigrateReportPageComponent {
     this.report.set(null);
     this.error.set('');
     this.truncated.set(false);
+    this.leadEmail.set('');
+    this.leadDestination.set('unsure');
+    this.leadNote.set('');
+    this.leadHoneypot.set('');
+    this.leadSubmitted.set(false);
+    this.leadError.set('');
+  }
+
+  protected onLeadEmail(event: Event): void {
+    this.leadEmail.set((event.target as HTMLInputElement).value);
+  }
+
+  protected onLeadNote(event: Event): void {
+    this.leadNote.set((event.target as HTMLTextAreaElement).value);
+  }
+
+  protected onHoneypot(event: Event): void {
+    this.leadHoneypot.set((event.target as HTMLInputElement).value);
+  }
+
+  protected async submitLead(event: Event): Promise<void> {
+    event.preventDefault();
+    this.leadError.set('');
+    const email = this.leadEmail().trim();
+    if (!email || !email.includes('@')) {
+      this.leadError.set('Enter a valid email address.');
+      return;
+    }
+
+    const r = this.report();
+    this.leadSubmitting.set(true);
+    try {
+      const resp = await fetch('/api/report-lead', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          destination: this.leadDestination(),
+          note: this.leadNote().trim() || undefined,
+          summary: r
+            ? {
+                fileCount: r.fileCount,
+                totalOccurrences: r.totalOccurrences,
+                ngwaveAutomatedPct: r.ngwaveSummary.automatedPct,
+                materialAutomatedPct: r.materialSummary.automatedPct,
+              }
+            : undefined,
+          hp: this.leadHoneypot() || undefined,
+        }),
+      });
+      const raw = await resp.text();
+      let data: { error?: string; ok?: boolean } = {};
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch {
+        throw new Error(
+          `Server returned an unexpected response (${resp.status}). Please try again.`,
+        );
+      }
+      if (!resp.ok) throw new Error(data.error || `Request failed (${resp.status}).`);
+      this.leadSubmitted.set(true);
+    } catch (e) {
+      this.leadError.set(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
+    } finally {
+      this.leadSubmitting.set(false);
+    }
   }
 
   private async process(collected: { path: string; file: File }[]): Promise<void> {
