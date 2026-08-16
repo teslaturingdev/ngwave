@@ -29,6 +29,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/migrate-report.page').then((m) => m.MigrateReportPageComponent),
   },
+  {
+    path: 'migrate/project',
+    loadComponent: () =>
+      import('./pages/migrate-project.page').then((m) => m.MigrateProjectPageComponent),
+  },
   { path: 'changelog', component: ChangelogPageComponent },
   { path: 'components/button', component: ButtonPageComponent },
   { path: 'components/data-table', component: DataTablePageComponent },

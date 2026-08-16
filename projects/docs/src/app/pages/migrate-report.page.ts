@@ -1,53 +1,18 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { buildCostReport, ComponentCostRow, CostReport, FileInput } from '@ngwave/report';
+import {
+  CollectedFile,
+  collectFromDataTransfer,
+  collectFromFileList,
+  isRelevantPath,
+  MAX_FILES,
+  readFileContents,
+} from '@ngwave/files';
+import { buildCostReport, ComponentCostRow, CostReport } from '@ngwave/report';
 import { NwSpinnerComponent } from '@ngwave/ui';
 
-const MAX_FILES = 500;
-const EXCLUDED_PATH_SEGMENTS = ['node_modules/', 'dist/', '.git/'];
-
 function isRelevant(path: string): boolean {
-  if (!path.toLowerCase().endsWith('.html')) return false;
-  return !EXCLUDED_PATH_SEGMENTS.some((seg) => path.includes(seg));
-}
-
-async function readDirEntry(
-  entry: FileSystemEntry,
-  prefix: string,
-  out: { path: string; file: File }[],
-): Promise<void> {
-  const path = prefix + entry.name;
-  if (entry.isFile) {
-    const fileEntry = entry as FileSystemFileEntry;
-    const file = await new Promise<File>((resolve, reject) => fileEntry.file(resolve, reject));
-    out.push({ path, file });
-    return;
-  }
-  if (entry.isDirectory) {
-    const reader = (entry as FileSystemDirectoryEntry).createReader();
-    let batch: FileSystemEntry[];
-    do {
-      batch = await new Promise<FileSystemEntry[]>((resolve, reject) =>
-        reader.readEntries(resolve, reject),
-      );
-      for (const child of batch) await readDirEntry(child, path + '/', out);
-    } while (batch.length > 0);
-  }
-}
-
-async function collectFromDataTransfer(dt: DataTransfer): Promise<{ path: string; file: File }[]> {
-  const out: { path: string; file: File }[] = [];
-  const entries: FileSystemEntry[] = [];
-  for (let i = 0; i < dt.items.length; i++) {
-    const entry = dt.items[i].webkitGetAsEntry?.();
-    if (entry) entries.push(entry);
-  }
-  if (entries.length) {
-    for (const entry of entries) await readDirEntry(entry, '', out);
-  } else {
-    for (const file of Array.from(dt.files)) out.push({ path: file.name, file });
-  }
-  return out;
+  return isRelevantPath(path, '.html');
 }
 
 @Component({
@@ -415,19 +380,14 @@ export class MigrateReportPageComponent {
 
   protected async onFolderInput(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    const fileList = input.files ? Array.from(input.files) : [];
-    const collected = fileList.map((file) => ({
-      path: (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name,
-      file,
-    }));
+    const collected = collectFromFileList(input.files, true);
     await this.process(collected);
     input.value = '';
   }
 
   protected async onFilesInput(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    const fileList = input.files ? Array.from(input.files) : [];
-    const collected = fileList.map((file) => ({ path: file.name, file }));
+    const collected = collectFromFileList(input.files, false);
     await this.process(collected);
     input.value = '';
   }
@@ -504,7 +464,7 @@ export class MigrateReportPageComponent {
     }
   }
 
-  private async process(collected: { path: string; file: File }[]): Promise<void> {
+  private async process(collected: CollectedFile[]): Promise<void> {
     this.error.set('');
     const relevant = collected.filter((c) => isRelevant(c.path));
     if (!relevant.length) {
@@ -520,9 +480,7 @@ export class MigrateReportPageComponent {
     this.scanning.set(true);
     this.scanCount.set(capped.length);
     try {
-      const files: FileInput[] = await Promise.all(
-        capped.map(async (c) => ({ path: c.path, content: await c.file.text() })),
-      );
+      const files = await readFileContents(capped);
       this.report.set(buildCostReport(files));
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : 'Something went wrong reading those files.');

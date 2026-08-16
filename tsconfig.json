@@ -10,7 +10,9 @@
     "paths": {
       "@ngwave/ui": ["./projects/ngwave-ui/src/public-api.ts"],
       "@ngwave/migrate": ["./projects/ngwave-migrate/src/index.ts"],
-      "@ngwave/report": ["./lib/report/index.ts"]
+      "@ngwave/report": ["./lib/report/index.ts"],
+      "@ngwave/files": ["./lib/files/index.ts"],
+      "@ngwave/batch-migrate": ["./lib/batch-migrate/index.ts"]
     },
     "skipLibCheck": true,
     "isolatedModules": true,
