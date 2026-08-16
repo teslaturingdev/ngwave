@@ -6,5 +6,6 @@ export type {
   EffortTier,
   OwnCdkEstimate,
 } from './cost-model';
-export type { FileInput } from './scan';
+export { scanFiles } from './scan';
+export type { FileInput, ScanResult, TagUsage } from './scan';
 export type { MaterialMapping, MaterialStatus } from './material-map';

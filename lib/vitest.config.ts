@@ -4,7 +4,12 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     environment: 'node',
-    include: ['report/**/*.spec.ts', 'files/**/*.spec.ts', 'batch-migrate/**/*.spec.ts'],
+    include: [
+      'report/**/*.spec.ts',
+      'files/**/*.spec.ts',
+      'batch-migrate/**/*.spec.ts',
+      'own-library/**/*.spec.ts',
+    ],
   },
   resolve: {
     alias: {

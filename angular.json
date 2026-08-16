@@ -48,6 +48,21 @@
               {
                 "glob": "**/*",
                 "input": "projects/docs/public"
+              },
+              {
+                "glob": "**/*.ts",
+                "input": "projects/ngwave-ui/src/lib",
+                "output": "ngwave-ui-src/lib"
+              },
+              {
+                "glob": "tokens.css",
+                "input": "projects/ngwave-ui/src/styles",
+                "output": "ngwave-ui-src/styles"
+              },
+              {
+                "glob": "tailwind.config.js",
+                "input": "projects/ngwave-ui",
+                "output": "ngwave-ui-src"
               }
             ],
             "styles": ["projects/docs/src/styles.css"]
