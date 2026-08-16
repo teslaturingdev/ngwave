@@ -24,6 +24,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/migrate-ai.page').then((m) => m.MigrateAiPageComponent),
   },
+  {
+    path: 'migrate/report',
+    loadComponent: () =>
+      import('./pages/migrate-report.page').then((m) => m.MigrateReportPageComponent),
+  },
   { path: 'changelog', component: ChangelogPageComponent },
   { path: 'components/button', component: ButtonPageComponent },
   { path: 'components/data-table', component: DataTablePageComponent },

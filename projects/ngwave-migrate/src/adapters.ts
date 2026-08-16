@@ -533,3 +533,34 @@ export const autocompleteAdapter: Adapter = {
     return { bucket: 'passthrough' };
   },
 };
+
+// ---------------------------------------------------------------------------
+// Full set of PrimeNG element tags this codemod has an adapter for. Attribute
+// directives (pButton, pInputText, pInputTextarea) apply to plain elements
+// (button/input/textarea) and aren't tag names, so they're listed separately.
+// ---------------------------------------------------------------------------
+
+export const SUPPORTED_PRIMENG_TAGS: string[] = [
+  buttonAdapter.sourceTag,
+  dataTableAdapter.sourceTag,
+  dropdownAdapter.sourceTag,
+  'p-select',
+  'p-multiSelect',
+  dialogAdapter.sourceTag,
+  'p-sidebar',
+  tabsAdapter.sourceTag,
+  tabAdapter.sourceTag,
+  checkboxAdapter.sourceTag,
+  radioAdapter.sourceTag,
+  spinnerAdapter.sourceTag,
+  skeletonAdapter.sourceTag,
+  toastAdapter.sourceTag,
+  inputNumberAdapter.sourceTag,
+  autocompleteAdapter.sourceTag,
+];
+
+export const SUPPORTED_PRIMENG_ATTR_DIRECTIVES: string[] = [
+  'pButton',
+  'pInputText',
+  'pInputTextarea',
+];

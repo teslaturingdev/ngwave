@@ -9,7 +9,8 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@ngwave/ui": ["./projects/ngwave-ui/src/public-api.ts"],
-      "@ngwave/migrate": ["./projects/ngwave-migrate/src/index.ts"]
+      "@ngwave/migrate": ["./projects/ngwave-migrate/src/index.ts"],
+      "@ngwave/report": ["./lib/report/index.ts"]
     },
     "skipLibCheck": true,
     "isolatedModules": true,
