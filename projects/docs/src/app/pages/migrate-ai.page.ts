@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { migrate } from '@ngwave/migrate';
 import { NwSpinnerComponent } from '@ngwave/ui';
+import { AuthService } from '../auth.service';
 
 interface AiChange {
   summary: string;
@@ -307,6 +308,23 @@ function highlight(code: string): string {
             </div>
           } @else if (aiResult(); as ai) {
             <div class="space-y-4 p-4 animate-nw-fade-in">
+              @if (auth.isSignedIn()) {
+                <div class="flex items-center justify-end">
+                  <button
+                    type="button"
+                    (click)="save()"
+                    [disabled]="saving() || saved()"
+                    class="rounded-nw bg-surface-100 px-3 py-1.5 text-sm font-medium text-surface-700 transition-colors hover:bg-surface-200 disabled:opacity-50"
+                  >
+                    {{ saved() ? 'Saved ✓' : saving() ? 'Saving…' : 'Save to my account' }}
+                  </button>
+                </div>
+              }
+              @if (saveError()) {
+                <div class="rounded-nw border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                  {{ saveError() }}
+                </div>
+              }
               <div>
                 <div class="mb-1.5 flex items-center justify-between">
                   <span
@@ -420,6 +438,10 @@ export class MigrateAiPageComponent {
   protected readonly activeSample = signal<string>('table');
 
   private readonly san = inject(DomSanitizer);
+  protected readonly auth = inject(AuthService);
+  protected readonly saving = signal(false);
+  protected readonly saved = signal(false);
+  protected readonly saveError = signal('');
 
   protected readonly det = computed(() =>
     this.htmlInput().trim()
@@ -468,6 +490,8 @@ export class MigrateAiPageComponent {
     this.activeSample.set('');
     this.aiResult.set(null);
     this.aiError.set('');
+    this.saved.set(false);
+    this.saveError.set('');
   }
 
   protected toggleDeep(event: Event): void {
@@ -496,10 +520,16 @@ export class MigrateAiPageComponent {
     this.aiLoading.set(true);
     this.aiError.set('');
     this.aiResult.set(null);
+    this.saved.set(false);
+    this.saveError.set('');
     try {
+      const token = await this.auth.getToken();
       const resp = await fetch('/api/migrate-ai', {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: {
+          'content-type': 'application/json',
+          ...(token ? { authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           html: this.htmlInput(),
           ts: this.tsInput().trim() || undefined,
@@ -522,6 +552,39 @@ export class MigrateAiPageComponent {
       this.aiError.set(e instanceof Error ? e.message : 'Something went wrong.');
     } finally {
       this.aiLoading.set(false);
+    }
+  }
+
+  protected async save(): Promise<void> {
+    const result = this.aiResult();
+    if (!result) return;
+    this.saving.set(true);
+    this.saveError.set('');
+    try {
+      const token = await this.auth.getToken();
+      const resp = await fetch('/api/save-migration', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          ...(token ? { authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          tool: 'migrate-ai',
+          summary: {
+            component: this.activeSample() || 'custom',
+            changes: result.changes?.length ?? 0,
+          },
+          payload: result,
+        }),
+      });
+      const raw = await resp.text();
+      const data = raw ? JSON.parse(raw) : {};
+      if (!resp.ok) throw new Error(data.error || `Request failed (${resp.status}).`);
+      this.saved.set(true);
+    } catch (e) {
+      this.saveError.set(e instanceof Error ? e.message : 'Could not save this result.');
+    } finally {
+      this.saving.set(false);
     }
   }
 }

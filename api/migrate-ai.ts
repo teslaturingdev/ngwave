@@ -1,6 +1,7 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { runAiMigration } from '../lib/ai/run.js';
+import { getUserId } from '../lib/auth/verify.js';
 
 /**
  * POST /api/migrate-ai
@@ -9,12 +10,16 @@ import { runAiMigration } from '../lib/ai/run.js';
  *
  * The deterministic codemod runs in the browser; this only does the AI "finish" step.
  * Key is server-side (ANTHROPIC_API_KEY env var) — never sent to the client.
+ *
+ * Requires a signed-in user (Authorization: Bearer <Clerk token>) — the /migrate/* routes
+ * are gated behind sign-in in the UI, and this endpoint enforces the same requirement
+ * server-side rather than relying on the UI guard alone.
  */
 
-// Real, persistent rate limit — a fixed daily window per IP, backed by Upstash Redis
-// (provisioned via the Vercel Marketplace; see ADR "Upstash Redis for a real rate
-// limiter"). Replaces the old in-memory Map, which reset on every cold start.
-const DAILY_LIMIT = Number(process.env.MIGRATE_DAILY_LIMIT) || 100;
+// Real, persistent rate limit — a fixed daily window per signed-in user, backed by
+// Upstash Redis (provisioned via the Vercel Marketplace; see ADR "Upstash Redis for a
+// real rate limiter"). Replaces the old in-memory Map, which reset on every cold start.
+const DAILY_LIMIT = Number(process.env.MIGRATE_DAILY_LIMIT) || 500;
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL!,
@@ -24,19 +29,8 @@ const redis = new Redis({
 const ratelimit = new Ratelimit({
   redis,
   limiter: Ratelimit.fixedWindow(DAILY_LIMIT, '1 d'),
-  prefix: 'migrate-ai',
+  prefix: 'migrate-ai:user',
 });
-
-function ipOf(req: { headers: Record<string, string | string[] | undefined> }): string {
-  const fwd = req.headers['x-forwarded-for'];
-  const raw = Array.isArray(fwd) ? fwd[0] : fwd;
-  return (raw || 'unknown').split(',')[0].trim();
-}
-
-async function overLimit(ip: string): Promise<boolean> {
-  const { success } = await ratelimit.limit(ip);
-  return !success;
-}
 
 export default async function handler(
   req: {
@@ -58,12 +52,20 @@ export default async function handler(
     res.status(500).json({ error: 'Server is not configured (missing ANTHROPIC_API_KEY).' });
     return;
   }
+  if (!process.env.CLERK_SECRET_KEY) {
+    res.status(500).json({ error: 'Server is not configured (missing CLERK_SECRET_KEY).' });
+    return;
+  }
 
-  const ip = ipOf(req);
-  if (await overLimit(ip)) {
-    res.status(429).json({
-      error: `Free limit reached (${DAILY_LIMIT}/day). Sign-in tiers are coming soon.`,
-    });
+  const userId = await getUserId(req);
+  if (!userId) {
+    res.status(401).json({ error: 'Sign in to use Migrate with AI.' });
+    return;
+  }
+
+  const { success } = await ratelimit.limit(userId);
+  if (!success) {
+    res.status(429).json({ error: `Daily limit reached (${DAILY_LIMIT}/day). Try again tomorrow.` });
     return;
   }
 

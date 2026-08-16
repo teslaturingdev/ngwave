@@ -1,4 +1,7 @@
-# NgWave
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="projects/docs/public/logo-dark.svg">
+  <img src="projects/docs/public/logo.svg" alt="NgWave" height="56">
+</picture>
 
 **The open-source, Signals-first alternative to PrimeNG for Angular 22.**
 

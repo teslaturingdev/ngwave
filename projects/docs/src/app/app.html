@@ -3,10 +3,30 @@
     class="sticky top-0 z-20 flex items-center justify-between gap-4 px-6 h-14 border-b border-surface-200 bg-surface-0/90 backdrop-blur"
   >
     <a routerLink="/" class="flex items-center gap-2">
-      <span
-        class="inline-flex h-7 w-7 items-center justify-center rounded-nw bg-nw-600 text-white font-bold"
-        >N</span
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 40 40"
+        aria-hidden="true"
+        class="shrink-0"
       >
+        <path
+          d="M17 10 L7 20 L17 30"
+          style="stroke: rgb(var(--nw-600))"
+          stroke-width="4.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+        />
+        <path
+          d="M23 10 L33 20 L23 30"
+          style="stroke: rgb(var(--nw-400))"
+          stroke-width="4.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+        />
+      </svg>
       <span class="font-semibold text-surface-900">NgWave</span>
       <span class="text-xs text-surface-500 hidden sm:inline"
         >Open-source Angular UI</span
@@ -21,6 +41,38 @@
         class="text-sm text-surface-600 hover:text-surface-900 px-2 py-1"
         >GitHub</a
       >
+      @if (auth.isLoaded()) {
+        @if (auth.isSignedIn()) {
+          <a
+            routerLink="/dashboard"
+            routerLinkActive="text-nw-600 font-medium"
+            class="text-sm text-surface-600 hover:text-surface-900 px-2 py-1"
+            >Dashboard</a
+          >
+          <button
+            type="button"
+            (click)="auth.signOut()"
+            class="text-sm text-surface-600 hover:text-surface-900 px-2 py-1"
+          >
+            Sign out
+          </button>
+        } @else {
+          <button
+            type="button"
+            (click)="auth.openSignIn('/')"
+            class="text-sm text-surface-600 hover:text-surface-900 px-2 py-1"
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            (click)="auth.openSignUp('/')"
+            class="rounded-nw bg-nw-600 px-3 py-1.5 text-sm font-medium text-white shadow-nw-sm transition-colors hover:bg-nw-700"
+          >
+            Sign up
+          </button>
+        }
+      }
       <button
         type="button"
         (click)="theme.toggle()"

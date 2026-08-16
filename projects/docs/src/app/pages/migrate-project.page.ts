@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   CollectedFile,
@@ -7,9 +7,11 @@ import {
   isRelevantPath,
   MAX_FILES,
   readFileContents,
+  uint8ToBase64,
 } from '@ngwave/files';
 import { buildMigratedZip, migrateProject, ProjectMigrationResult } from '@ngwave/batch-migrate';
 import { NwSpinnerComponent } from '@ngwave/ui';
+import { AuthService } from '../auth.service';
 
 function isRelevant(path: string): boolean {
   return isRelevantPath(path, '.html');
@@ -32,7 +34,7 @@ function isRelevant(path: string): boolean {
             class="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium backdrop-blur"
           >
             <span class="h-1.5 w-1.5 rounded-full bg-green-300"></span>
-            Runs 100% in your browser — nothing is uploaded, free, no sign-up
+            Runs 100% in your browser — nothing is uploaded, free with sign-in
           </span>
           <h1 class="mt-3 text-3xl font-bold tracking-tight">Migrate Your Whole Project</h1>
           <p class="mt-1.5 max-w-2xl text-white/80">
@@ -166,13 +168,30 @@ function isRelevant(path: string): boolean {
             </div>
           </div>
 
-          <button
-            type="button"
-            (click)="download()"
-            class="inline-flex w-full items-center justify-center gap-2 rounded-nw bg-nw-600 px-4 py-3 text-sm font-semibold text-white shadow-nw-sm transition-colors hover:bg-nw-700 sm:w-auto"
-          >
-            Download migrated project (.zip) →
-          </button>
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              (click)="download()"
+              class="inline-flex items-center justify-center gap-2 rounded-nw bg-nw-600 px-4 py-3 text-sm font-semibold text-white shadow-nw-sm transition-colors hover:bg-nw-700"
+            >
+              Download migrated project (.zip) →
+            </button>
+            @if (auth.isSignedIn()) {
+              <button
+                type="button"
+                (click)="save()"
+                [disabled]="saving() || saved()"
+                class="inline-flex items-center justify-center gap-2 rounded-nw bg-surface-100 px-4 py-3 text-sm font-medium text-surface-700 transition-colors hover:bg-surface-200 disabled:opacity-50"
+              >
+                {{ saved() ? 'Saved ✓' : saving() ? 'Saving…' : 'Save to my account' }}
+              </button>
+            }
+          </div>
+          @if (saveError()) {
+            <div class="rounded-nw border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {{ saveError() }}
+            </div>
+          }
 
           <!-- Per-file breakdown -->
           <div class="overflow-x-auto rounded-nw-lg border border-surface-200 bg-surface-0 shadow-nw-sm">
@@ -226,6 +245,7 @@ function isRelevant(path: string): boolean {
   `,
 })
 export class MigrateProjectPageComponent {
+  protected readonly auth = inject(AuthService);
   protected readonly maxFiles = MAX_FILES;
   protected readonly processing = signal(false);
   protected readonly processCount = signal(0);
@@ -233,6 +253,9 @@ export class MigrateProjectPageComponent {
   protected readonly result = signal<ProjectMigrationResult | null>(null);
   protected readonly truncated = signal(false);
   protected readonly dragOver = signal(false);
+  protected readonly saving = signal(false);
+  protected readonly saved = signal(false);
+  protected readonly saveError = signal('');
 
   protected automatedPct(): number {
     const r = this.result();
@@ -284,6 +307,43 @@ export class MigrateProjectPageComponent {
     this.result.set(null);
     this.error.set('');
     this.truncated.set(false);
+    this.saved.set(false);
+    this.saveError.set('');
+  }
+
+  protected async save(): Promise<void> {
+    const r = this.result();
+    if (!r) return;
+    this.saving.set(true);
+    this.saveError.set('');
+    try {
+      const zipBytes = buildMigratedZip(r.files);
+      const token = await this.auth.getToken();
+      const resp = await fetch('/api/save-migration', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          ...(token ? { authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          tool: 'migrate-project',
+          summary: {
+            files: r.totals.fileCount,
+            mapped: r.totals.mappedCount,
+            manual: r.totals.manualCount,
+          },
+          artifactBase64: uint8ToBase64(zipBytes),
+        }),
+      });
+      const raw = await resp.text();
+      const data = raw ? JSON.parse(raw) : {};
+      if (!resp.ok) throw new Error(data.error || `Request failed (${resp.status}).`);
+      this.saved.set(true);
+    } catch (e) {
+      this.saveError.set(e instanceof Error ? e.message : 'Could not save this migration.');
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   protected download(): void {

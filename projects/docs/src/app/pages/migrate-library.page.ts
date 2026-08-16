@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   CollectedFile,
@@ -7,6 +7,7 @@ import {
   isRelevantPath,
   MAX_FILES,
   readFileContents,
+  uint8ToBase64,
 } from '@ngwave/files';
 import {
   buildLibraryZip,
@@ -18,6 +19,7 @@ import {
 } from '@ngwave/own-library';
 import { scanFiles } from '@ngwave/report';
 import { NwSpinnerComponent } from '@ngwave/ui';
+import { AuthService } from '../auth.service';
 
 function isRelevant(path: string): boolean {
   return isRelevantPath(path, '.html');
@@ -40,7 +42,7 @@ function isRelevant(path: string): boolean {
             class="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium backdrop-blur"
           >
             <span class="h-1.5 w-1.5 rounded-full bg-green-300"></span>
-            Runs 100% in your browser — nothing is uploaded, free, no sign-up
+            Runs 100% in your browser — nothing is uploaded, free with sign-in
           </span>
           <h1 class="mt-3 text-3xl font-bold tracking-tight">Your Own Component Library</h1>
           <p class="mt-1.5 max-w-2xl text-white/80">
@@ -209,14 +211,32 @@ function isRelevant(path: string): boolean {
                     Renamed, trimmed, yours. No NgWave branding left anywhere.
                   </div>
                 </div>
-                <button
-                  type="button"
-                  (click)="download()"
-                  class="ml-auto inline-flex items-center gap-2 rounded-nw bg-nw-600 px-4 py-2.5 text-sm font-semibold text-white shadow-nw-sm transition-colors hover:bg-nw-700"
-                >
-                  Download {{ prefix() }}-ui.zip →
-                </button>
+                <div class="ml-auto flex flex-wrap items-center gap-2">
+                  @if (auth.isSignedIn()) {
+                    <button
+                      type="button"
+                      (click)="save()"
+                      [disabled]="saving() || saved()"
+                      class="inline-flex items-center gap-2 rounded-nw bg-white px-4 py-2.5 text-sm font-medium text-green-800 shadow-nw-sm transition-colors hover:bg-green-100"
+                    >
+                      {{ saved() ? 'Saved ✓' : saving() ? 'Saving…' : 'Save to my account' }}
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    (click)="download()"
+                    class="inline-flex items-center gap-2 rounded-nw bg-nw-600 px-4 py-2.5 text-sm font-semibold text-white shadow-nw-sm transition-colors hover:bg-nw-700"
+                  >
+                    Download {{ prefix() }}-ui.zip →
+                  </button>
+                </div>
               </div>
+
+              @if (saveError()) {
+                <div class="rounded-nw border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                  {{ saveError() }}
+                </div>
+              }
 
               <div class="rounded-nw border border-surface-200 bg-surface-50 p-3 text-sm text-surface-600">
                 This is a rename-and-trim of NgWave's real component source into your
@@ -231,6 +251,7 @@ function isRelevant(path: string): boolean {
   `,
 })
 export class MigrateLibraryPageComponent {
+  protected readonly auth = inject(AuthService);
   protected readonly maxFiles = MAX_FILES;
   protected readonly scanning = signal(false);
   protected readonly error = signal('');
@@ -240,6 +261,9 @@ export class MigrateLibraryPageComponent {
   protected readonly prefix = signal('');
   protected readonly generating = signal(false);
   protected readonly generated = signal<GeneratedLibrary | null>(null);
+  protected readonly saving = signal(false);
+  protected readonly saved = signal(false);
+  protected readonly saveError = signal('');
 
   private usedTags: string[] = [];
 
@@ -294,6 +318,39 @@ export class MigrateLibraryPageComponent {
     this.prefix.set('');
     this.generated.set(null);
     this.usedTags = [];
+    this.saved.set(false);
+    this.saveError.set('');
+  }
+
+  protected async save(): Promise<void> {
+    const lib = this.generated();
+    if (!lib) return;
+    this.saving.set(true);
+    this.saveError.set('');
+    try {
+      const zipBytes = buildLibraryZip(lib.files);
+      const token = await this.auth.getToken();
+      const resp = await fetch('/api/save-migration', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          ...(token ? { authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          tool: 'own-library',
+          summary: { prefix: this.prefix(), files: lib.files.length },
+          artifactBase64: uint8ToBase64(zipBytes),
+        }),
+      });
+      const raw = await resp.text();
+      const data = raw ? JSON.parse(raw) : {};
+      if (!resp.ok) throw new Error(data.error || `Request failed (${resp.status}).`);
+      this.saved.set(true);
+    } catch (e) {
+      this.saveError.set(e instanceof Error ? e.message : 'Could not save this library.');
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   protected async generate(): Promise<void> {

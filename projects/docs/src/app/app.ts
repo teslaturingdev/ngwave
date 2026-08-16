@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from './auth.service';
 import { ThemeService } from './theme.service';
 
 interface NavItem {
@@ -14,6 +15,7 @@ interface NavItem {
 })
 export class App {
   protected readonly theme = inject(ThemeService);
+  protected readonly auth = inject(AuthService);
   protected readonly components: NavItem[] = [
     { label: 'Button', path: '/components/button' },
     { label: 'DataTable', path: '/components/data-table' },

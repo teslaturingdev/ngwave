@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './auth.guard';
 import { HomeComponent } from './pages/home.component';
 import { ButtonPageComponent } from './pages/button.page';
 import { DataTablePageComponent } from './pages/data-table.page';
@@ -16,28 +17,39 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
   {
     path: 'migrate',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/migrate.page').then((m) => m.MigratePageComponent),
   },
   {
     path: 'migrate/ai',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/migrate-ai.page').then((m) => m.MigrateAiPageComponent),
   },
   {
     path: 'migrate/report',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/migrate-report.page').then((m) => m.MigrateReportPageComponent),
   },
   {
     path: 'migrate/project',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/migrate-project.page').then((m) => m.MigrateProjectPageComponent),
   },
   {
     path: 'migrate/library',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/migrate-library.page').then((m) => m.MigrateLibraryPageComponent),
+  },
+  {
+    path: 'dashboard',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/dashboard.page').then((m) => m.DashboardPageComponent),
   },
   { path: 'changelog', component: ChangelogPageComponent },
   { path: 'components/button', component: ButtonPageComponent },

@@ -56,3 +56,6 @@ Thumbs.db
 secrets.*
 *-secrets.env
 .env*
+
+# Generated at build time by scripts/write-env.mjs — see environment.example.ts
+/projects/docs/src/environments/environment.ts

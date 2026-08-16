@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 232 56" height="56">
+  <path d="M17 10 L7 20 L17 30" transform="translate(0,8)" stroke="#4f46e5" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M23 10 L33 20 L23 30" transform="translate(0,8)" stroke="#818cf8" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <text x="52" y="38" font-family="Helvetica Neue, Arial, sans-serif" font-weight="700" font-size="28" letter-spacing="-0.5" fill="#0f172a">Ng<tspan fill="#4f46e5">Wave</tspan></text>
+</svg>
