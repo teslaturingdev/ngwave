@@ -1,3 +1,5 @@
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 import { runAiMigration } from '../lib/ai/run.js';
 
 /**
@@ -9,11 +11,21 @@ import { runAiMigration } from '../lib/ai/run.js';
  * Key is server-side (ANTHROPIC_API_KEY env var) — never sent to the client.
  */
 
-// Best-effort in-memory rate limit (per warm instance; resets on cold start). Real
-// per-user limiting arrives with accounts + KV in Phase 2. Kept high for now so it
-// doesn't block real use — the funded key's own credit is the true spend cap.
+// Real, persistent rate limit — a fixed daily window per IP, backed by Upstash Redis
+// (provisioned via the Vercel Marketplace; see ADR "Upstash Redis for a real rate
+// limiter"). Replaces the old in-memory Map, which reset on every cold start.
 const DAILY_LIMIT = Number(process.env.MIGRATE_DAILY_LIMIT) || 100;
-const hits = new Map<string, { count: number; day: string }>();
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL!,
+  token: process.env.KV_REST_API_TOKEN!,
+});
+
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.fixedWindow(DAILY_LIMIT, '1 d'),
+  prefix: 'migrate-ai',
+});
 
 function ipOf(req: { headers: Record<string, string | string[] | undefined> }): string {
   const fwd = req.headers['x-forwarded-for'];
@@ -21,15 +33,9 @@ function ipOf(req: { headers: Record<string, string | string[] | undefined> }): 
   return (raw || 'unknown').split(',')[0].trim();
 }
 
-function overLimit(ip: string): boolean {
-  const day = new Date().toISOString().slice(0, 10);
-  const rec = hits.get(ip);
-  if (!rec || rec.day !== day) {
-    hits.set(ip, { count: 1, day });
-    return false;
-  }
-  rec.count += 1;
-  return rec.count > DAILY_LIMIT;
+async function overLimit(ip: string): Promise<boolean> {
+  const { success } = await ratelimit.limit(ip);
+  return !success;
 }
 
 export default async function handler(
@@ -54,7 +60,7 @@ export default async function handler(
   }
 
   const ip = ipOf(req);
-  if (overLimit(ip)) {
+  if (await overLimit(ip)) {
     res.status(429).json({
       error: `Free limit reached (${DAILY_LIMIT}/day). Sign-in tiers are coming soon.`,
     });
