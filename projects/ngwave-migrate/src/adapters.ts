@@ -535,6 +535,524 @@ export const autocompleteAdapter: Adapter = {
 };
 
 // ---------------------------------------------------------------------------
+// Divider: p-divider → nw-divider
+// ---------------------------------------------------------------------------
+
+const DIVIDER_RENAMES: Record<string, Rename> = {
+  layout: { to: 'layout' },
+  type: { to: 'type' },
+  align: { to: 'align' },
+  styleClass: { to: 'class' },
+};
+
+export const dividerAdapter: Adapter = {
+  sourceTag: 'p-divider',
+  targetTag: 'nw-divider',
+  importName: 'NwDividerComponent',
+  mapAttr(attr) {
+    const r = DIVIDER_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Avatar: p-avatar → nw-avatar
+// ---------------------------------------------------------------------------
+
+const AVATAR_RENAMES: Record<string, Rename> = {
+  label: { to: 'label' },
+  icon: { to: 'icon' },
+  image: { to: 'image' },
+  size: { to: 'size' },
+  shape: { to: 'shape' },
+  onImageError: { to: 'imageError' },
+  styleClass: { to: 'class' },
+};
+
+export const avatarAdapter: Adapter = {
+  sourceTag: 'p-avatar',
+  targetTag: 'nw-avatar',
+  importName: 'NwAvatarComponent',
+  mapAttr(attr) {
+    const r = AVATAR_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+export const avatarGroupAdapter: Adapter = {
+  sourceTag: 'p-avatarGroup',
+  targetTag: 'nw-avatar-group',
+  importName: 'NwAvatarGroupComponent',
+  mapAttr(attr) {
+    if (attr.name === 'styleClass') return rename(attr, { to: 'class' });
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Tag: p-tag → nw-tag
+// ---------------------------------------------------------------------------
+
+const TAG_RENAMES: Record<string, Rename> = {
+  value: { to: 'value' },
+  severity: { to: 'severity' },
+  icon: { to: 'icon' },
+  rounded: { to: 'rounded' },
+  styleClass: { to: 'class' },
+};
+
+export const tagAdapter: Adapter = {
+  sourceTag: 'p-tag',
+  targetTag: 'nw-tag',
+  importName: 'NwTagComponent',
+  mapAttr(attr) {
+    const r = TAG_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Chip: p-chip → nw-chip
+// ---------------------------------------------------------------------------
+
+const CHIP_RENAMES: Record<string, Rename> = {
+  label: { to: 'label' },
+  icon: { to: 'icon' },
+  image: { to: 'image' },
+  removable: { to: 'removable' },
+  removeIcon: { to: 'removeIcon' },
+  onRemove: { to: 'removed' },
+  styleClass: { to: 'class' },
+};
+
+export const chipAdapter: Adapter = {
+  sourceTag: 'p-chip',
+  targetTag: 'nw-chip',
+  importName: 'NwChipComponent',
+  mapAttr(attr) {
+    const r = CHIP_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Fieldset: p-fieldset → nw-fieldset
+// ---------------------------------------------------------------------------
+
+const FIELDSET_RENAMES: Record<string, Rename> = {
+  legend: { to: 'legend' },
+  toggleable: { to: 'toggleable' },
+  collapsed: { to: 'collapsed' },
+  styleClass: { to: 'class' },
+};
+
+export const fieldsetAdapter: Adapter = {
+  sourceTag: 'p-fieldset',
+  targetTag: 'nw-fieldset',
+  importName: 'NwFieldsetComponent',
+  mapAttr(attr) {
+    const r = FIELDSET_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Panel: p-panel → nw-panel
+// ---------------------------------------------------------------------------
+
+const PANEL_RENAMES: Record<string, Rename> = {
+  header: { to: 'header' },
+  toggleable: { to: 'toggleable' },
+  collapsed: { to: 'collapsed' },
+  expandIcon: { to: 'expandIcon' },
+  collapseIcon: { to: 'collapseIcon' },
+  styleClass: { to: 'class' },
+};
+
+export const panelAdapter: Adapter = {
+  sourceTag: 'p-panel',
+  targetTag: 'nw-panel',
+  importName: 'NwPanelComponent',
+  mapAttr(attr) {
+    const r = PANEL_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Card: p-card → nw-card
+// ---------------------------------------------------------------------------
+
+const CARD_RENAMES: Record<string, Rename> = {
+  header: { to: 'header' },
+  subheader: { to: 'subheader' },
+  styleClass: { to: 'class' },
+};
+
+export const cardAdapter: Adapter = {
+  sourceTag: 'p-card',
+  targetTag: 'nw-card',
+  importName: 'NwCardComponent',
+  mapAttr(attr) {
+    const r = CARD_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Accordion: p-accordion / p-accordionTab → nw-accordion / nw-accordion-tab
+// ---------------------------------------------------------------------------
+
+const ACCORDION_RENAMES: Record<string, Rename> = {
+  multiple: { to: 'multiple' },
+  activeIndex: { to: 'expandedIndices' },
+  expandIcon: { to: 'expandIcon' },
+  collapseIcon: { to: 'collapseIcon' },
+  selectOnFocus: { to: 'selectOnFocus' },
+  styleClass: { to: 'class' },
+};
+
+export const accordionAdapter: Adapter = {
+  sourceTag: 'p-accordion',
+  targetTag: 'nw-accordion',
+  importName: 'NwAccordionComponent',
+  mapAttr(attr) {
+    const r = ACCORDION_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+const ACCORDION_TAB_RENAMES: Record<string, Rename> = {
+  header: { to: 'header' },
+  disabled: { to: 'disabled' },
+  styleClass: { to: 'class' },
+};
+
+export const accordionTabAdapter: Adapter = {
+  sourceTag: 'p-accordionTab',
+  targetTag: 'nw-accordion-tab',
+  importName: 'NwAccordionTabComponent',
+  mapAttr(attr) {
+    const r = ACCORDION_TAB_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Steps: p-steps → nw-steps
+// ---------------------------------------------------------------------------
+
+const STEPS_RENAMES: Record<string, Rename> = {
+  model: { to: 'items' },
+  activeIndex: { to: 'activeIndex' },
+  readonly: { to: 'readonly' },
+  styleClass: { to: 'class' },
+};
+
+export const stepsAdapter: Adapter = {
+  sourceTag: 'p-steps',
+  targetTag: 'nw-steps',
+  importName: 'NwStepsComponent',
+  mapAttr(attr) {
+    const r = STEPS_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Slider: p-slider → nw-slider
+// ---------------------------------------------------------------------------
+
+const SLIDER_RENAMES: Record<string, Rename> = {
+  min: { to: 'min' },
+  max: { to: 'max' },
+  step: { to: 'step' },
+  disabled: { to: 'disabled' },
+  range: { to: 'range' },
+  orientation: { to: 'orientation' },
+  animate: { to: 'animate' },
+  onSlideEnd: { to: 'onSlideEnd' },
+  styleClass: { to: 'class' },
+};
+
+export const sliderAdapter: Adapter = {
+  sourceTag: 'p-slider',
+  targetTag: 'nw-slider',
+  importName: 'NwSliderComponent',
+  mapAttr(attr) {
+    const r = SLIDER_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Rating: p-rating → nw-rating
+// ---------------------------------------------------------------------------
+
+const RATING_RENAMES: Record<string, Rename> = {
+  stars: { to: 'count' },
+  disabled: { to: 'disabled' },
+  readonly: { to: 'readonly' },
+  cancel: { to: 'cancel' },
+  onIcon: { to: 'onIcon' },
+  offIcon: { to: 'offIcon' },
+  styleClass: { to: 'class' },
+};
+
+export const ratingAdapter: Adapter = {
+  sourceTag: 'p-rating',
+  targetTag: 'nw-rating',
+  importName: 'NwRatingComponent',
+  mapAttr(attr) {
+    const r = RATING_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// FileUpload: p-fileUpload → nw-file-upload
+// ---------------------------------------------------------------------------
+
+const FILE_UPLOAD_RENAMES: Record<string, Rename> = {
+  mode: { to: 'mode' },
+  name: { to: 'name' },
+  url: { to: 'url' },
+  method: { to: 'method' },
+  multiple: { to: 'multiple' },
+  accept: { to: 'accept' },
+  disabled: { to: 'disabled' },
+  auto: { to: 'auto' },
+  maxFileSize: { to: 'maxFileSize' },
+  withCredentials: { to: 'withCredentials' },
+  customUpload: { to: 'customUpload' },
+  chooseLabel: { to: 'chooseLabel' },
+  uploadLabel: { to: 'uploadLabel' },
+  cancelLabel: { to: 'cancelLabel' },
+  showUploadButton: { to: 'showUploadButton' },
+  showCancelButton: { to: 'showCancelButton' },
+  previewWidth: { to: 'previewWidth' },
+  onSelect: { to: 'selected' },
+  onUpload: { to: 'uploaded' },
+  onError: { to: 'uploadError' },
+  onClear: { to: 'cleared' },
+  onRemove: { to: 'removed' },
+  onProgress: { to: 'progress' },
+  uploadHandler: { to: 'uploadHandler' },
+  styleClass: { to: 'class' },
+};
+
+export const fileUploadAdapter: Adapter = {
+  sourceTag: 'p-fileUpload',
+  targetTag: 'nw-file-upload',
+  importName: 'NwFileUploadComponent',
+  mapAttr(attr) {
+    const r = FILE_UPLOAD_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Listbox: p-listbox → nw-listbox
+// ---------------------------------------------------------------------------
+
+const LISTBOX_RENAMES: Record<string, Rename> = {
+  options: { to: 'options' },
+  multiple: { to: 'multiple' },
+  checkbox: { to: 'checkbox' },
+  showToggleAll: { to: 'showToggleAll' },
+  metaKeySelection: { to: 'metaKeySelection' },
+  disabled: { to: 'disabled' },
+  filter: { to: 'filter' },
+  filterPlaceholder: { to: 'filterPlaceholder' },
+  filterPlaceHolder: { to: 'filterPlaceholder' },
+  emptyMessage: { to: 'emptyMessage' },
+  emptyFilterMessage: { to: 'emptyFilterMessage' },
+  styleClass: { to: 'class' },
+};
+
+export const listboxAdapter: Adapter = {
+  sourceTag: 'p-listbox',
+  targetTag: 'nw-listbox',
+  importName: 'NwListboxComponent',
+  mapAttr(attr) {
+    const r = LISTBOX_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// SplitButton: p-splitButton → nw-split-button
+// ---------------------------------------------------------------------------
+
+const SPLIT_BUTTON_RENAMES: Record<string, Rename> = {
+  label: { to: 'label' },
+  icon: { to: 'icon' },
+  iconPos: { to: 'iconPosition' },
+  disabled: { to: 'disabled' },
+  severity: { to: 'variant' },
+  size: { to: 'size' },
+  model: { to: 'model' },
+  onClick: { to: 'clicked' },
+  styleClass: { to: 'class' },
+};
+
+export const splitButtonAdapter: Adapter = {
+  sourceTag: 'p-splitButton',
+  targetTag: 'nw-split-button',
+  importName: 'NwSplitButtonComponent',
+  mapAttr(attr) {
+    const r = SPLIT_BUTTON_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// OverlayPanel: p-overlayPanel → nw-overlay-panel
+// ---------------------------------------------------------------------------
+
+const OVERLAY_PANEL_RENAMES: Record<string, Rename> = {
+  dismissable: { to: 'dismissable' },
+  showCloseIcon: { to: 'showCloseIcon' },
+  onShow: { to: 'onShow' },
+  onHide: { to: 'onHide' },
+  styleClass: { to: 'class' },
+};
+
+export const overlayPanelAdapter: Adapter = {
+  sourceTag: 'p-overlayPanel',
+  targetTag: 'nw-overlay-panel',
+  importName: 'NwOverlayPanelComponent',
+  mapAttr(attr) {
+    const r = OVERLAY_PANEL_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// CascadeSelect: p-cascadeSelect → nw-cascade-select
+// ---------------------------------------------------------------------------
+
+const CASCADE_SELECT_RENAMES: Record<string, Rename> = {
+  options: { to: 'options' },
+  disabled: { to: 'disabled' },
+  placeholder: { to: 'placeholder' },
+  styleClass: { to: 'class' },
+};
+
+export const cascadeSelectAdapter: Adapter = {
+  sourceTag: 'p-cascadeSelect',
+  targetTag: 'nw-cascade-select',
+  importName: 'NwCascadeSelectComponent',
+  mapAttr(attr) {
+    const r = CASCADE_SELECT_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Splitter: p-splitter / p-splitterPanel → nw-splitter / nw-splitter-panel
+// ---------------------------------------------------------------------------
+
+const SPLITTER_RENAMES: Record<string, Rename> = {
+  layout: { to: 'orientation' },
+  gutterSize: { to: 'gutterSize' },
+  stateKey: { to: 'stateKey' },
+  stateStorage: { to: 'stateStorage' },
+  onResizeStart: { to: 'resizeStart' },
+  onResizeEnd: { to: 'resizeEnd' },
+  styleClass: { to: 'class' },
+};
+
+export const splitterAdapter: Adapter = {
+  sourceTag: 'p-splitter',
+  targetTag: 'nw-splitter',
+  importName: 'NwSplitterComponent',
+  mapAttr(attr) {
+    const r = SPLITTER_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+const SPLITTER_PANEL_RENAMES: Record<string, Rename> = {
+  size: { to: 'size' },
+  minSize: { to: 'minSize' },
+  styleClass: { to: 'class' },
+};
+
+export const splitterPanelAdapter: Adapter = {
+  sourceTag: 'p-splitterPanel',
+  targetTag: 'nw-splitter-panel',
+  importName: 'NwSplitterPanelComponent',
+  mapAttr(attr) {
+    const r = SPLITTER_PANEL_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Tree: p-tree → nw-tree
+// ---------------------------------------------------------------------------
+
+const TREE_RENAMES: Record<string, Rename> = {
+  value: { to: 'nodes' },
+  selectionMode: { to: 'selectionMode' },
+  selection: { to: 'selection' },
+  styleClass: { to: 'class' },
+};
+
+export const treeAdapter: Adapter = {
+  sourceTag: 'p-tree',
+  targetTag: 'nw-tree',
+  importName: 'NwTreeComponent',
+  mapAttr(attr) {
+    const r = TREE_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// TreeSelect: p-treeSelect → nw-tree-select
+// ---------------------------------------------------------------------------
+
+const TREE_SELECT_RENAMES: Record<string, Rename> = {
+  options: { to: 'nodes' },
+  disabled: { to: 'disabled' },
+  placeholder: { to: 'placeholder' },
+  styleClass: { to: 'class' },
+};
+
+export const treeSelectAdapter: Adapter = {
+  sourceTag: 'p-treeSelect',
+  targetTag: 'nw-tree-select',
+  importName: 'NwTreeSelectComponent',
+  mapAttr(attr) {
+    const r = TREE_SELECT_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Full set of PrimeNG element tags this codemod has an adapter for. Attribute
 // directives (pButton, pInputText, pInputTextarea) apply to plain elements
 // (button/input/textarea) and aren't tag names, so they're listed separately.
@@ -557,6 +1075,28 @@ export const SUPPORTED_PRIMENG_TAGS: string[] = [
   toastAdapter.sourceTag,
   inputNumberAdapter.sourceTag,
   autocompleteAdapter.sourceTag,
+  dividerAdapter.sourceTag,
+  avatarAdapter.sourceTag,
+  avatarGroupAdapter.sourceTag,
+  tagAdapter.sourceTag,
+  chipAdapter.sourceTag,
+  fieldsetAdapter.sourceTag,
+  panelAdapter.sourceTag,
+  cardAdapter.sourceTag,
+  accordionAdapter.sourceTag,
+  accordionTabAdapter.sourceTag,
+  stepsAdapter.sourceTag,
+  sliderAdapter.sourceTag,
+  ratingAdapter.sourceTag,
+  fileUploadAdapter.sourceTag,
+  listboxAdapter.sourceTag,
+  splitButtonAdapter.sourceTag,
+  overlayPanelAdapter.sourceTag,
+  cascadeSelectAdapter.sourceTag,
+  splitterAdapter.sourceTag,
+  splitterPanelAdapter.sourceTag,
+  treeAdapter.sourceTag,
+  treeSelectAdapter.sourceTag,
 ];
 
 export const SUPPORTED_PRIMENG_ATTR_DIRECTIVES: string[] = [

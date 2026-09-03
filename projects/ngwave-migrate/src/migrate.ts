@@ -1,20 +1,42 @@
 import {
   Adapter,
+  accordionAdapter,
+  accordionTabAdapter,
   autocompleteAdapter,
+  avatarAdapter,
+  avatarGroupAdapter,
   buttonAdapter,
+  cardAdapter,
+  cascadeSelectAdapter,
   checkboxAdapter,
+  chipAdapter,
   dataTableAdapter,
   dialogAdapter,
+  dividerAdapter,
   dropdownAdapter,
+  fieldsetAdapter,
+  fileUploadAdapter,
   inputNumberAdapter,
   inputTextAdapter,
+  listboxAdapter,
+  overlayPanelAdapter,
+  panelAdapter,
   radioAdapter,
+  ratingAdapter,
   skeletonAdapter,
+  sliderAdapter,
   spinnerAdapter,
+  splitButtonAdapter,
+  splitterAdapter,
+  splitterPanelAdapter,
+  stepsAdapter,
   tabAdapter,
   tabsAdapter,
+  tagAdapter,
   textareaAdapter,
   toastAdapter,
+  treeAdapter,
+  treeSelectAdapter,
 } from './adapters.js';
 import {
   FoundElement,
@@ -173,6 +195,28 @@ export function migrate(source: string): MigrationResult {
     radioAdapter,
     spinnerAdapter,
     skeletonAdapter,
+    dividerAdapter,
+    avatarAdapter,
+    avatarGroupAdapter,
+    tagAdapter,
+    chipAdapter,
+    fieldsetAdapter,
+    panelAdapter,
+    cardAdapter,
+    accordionAdapter,
+    accordionTabAdapter,
+    stepsAdapter,
+    sliderAdapter,
+    ratingAdapter,
+    fileUploadAdapter,
+    listboxAdapter,
+    splitButtonAdapter,
+    overlayPanelAdapter,
+    cascadeSelectAdapter,
+    splitterAdapter,
+    splitterPanelAdapter,
+    treeAdapter,
+    treeSelectAdapter,
   ];
   for (const adapter of simpleAdapters) {
     for (const el of findElements(source, adapter.sourceTag)) {
@@ -309,7 +353,51 @@ export function migrate(source: string): MigrationResult {
     .split('</p-progressSpinner>')
     .join('</nw-spinner>')
     .split('</p-skeleton>')
-    .join('</nw-skeleton>');
+    .join('</nw-skeleton>')
+    .split('</p-divider>')
+    .join('</nw-divider>')
+    .split('</p-avatar>')
+    .join('</nw-avatar>')
+    .split('</p-avatarGroup>')
+    .join('</nw-avatar-group>')
+    .split('</p-tag>')
+    .join('</nw-tag>')
+    .split('</p-chip>')
+    .join('</nw-chip>')
+    .split('</p-fieldset>')
+    .join('</nw-fieldset>')
+    .split('</p-panel>')
+    .join('</nw-panel>')
+    .split('</p-card>')
+    .join('</nw-card>')
+    .split('</p-accordion>')
+    .join('</nw-accordion>')
+    .split('</p-accordionTab>')
+    .join('</nw-accordion-tab>')
+    .split('</p-steps>')
+    .join('</nw-steps>')
+    .split('</p-slider>')
+    .join('</nw-slider>')
+    .split('</p-rating>')
+    .join('</nw-rating>')
+    .split('</p-fileUpload>')
+    .join('</nw-file-upload>')
+    .split('</p-listbox>')
+    .join('</nw-listbox>')
+    .split('</p-splitButton>')
+    .join('</nw-split-button>')
+    .split('</p-overlayPanel>')
+    .join('</nw-overlay-panel>')
+    .split('</p-cascadeSelect>')
+    .join('</nw-cascade-select>')
+    .split('</p-splitter>')
+    .join('</nw-splitter>')
+    .split('</p-splitterPanel>')
+    .join('</nw-splitter-panel>')
+    .split('</p-tree>')
+    .join('</nw-tree>')
+    .split('</p-treeSelect>')
+    .join('</nw-tree-select>');
 
   const report: MigrationReport = { mapped: [], manual: [], unsupported: [] };
   for (const note of notes) {

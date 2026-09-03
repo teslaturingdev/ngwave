@@ -2,14 +2,33 @@
  * Public API Surface of @ngwave/ui
  */
 
+export * from './lib/accordion';
 export * from './lib/autocomplete';
+export * from './lib/avatar';
 export * from './lib/button';
+export * from './lib/card';
+export * from './lib/cascade-select';
 export * from './lib/checkbox';
+export * from './lib/chip';
 export * from './lib/data-table';
 export * from './lib/dialog';
+export * from './lib/divider';
 export * from './lib/dropdown';
+export * from './lib/fieldset';
+export * from './lib/file-upload';
 export * from './lib/input';
+export * from './lib/listbox';
+export * from './lib/overlay-panel';
+export * from './lib/panel';
 export * from './lib/radio';
+export * from './lib/rating';
+export * from './lib/slider';
 export * from './lib/spinner';
+export * from './lib/split-button';
+export * from './lib/splitter';
+export * from './lib/steps';
 export * from './lib/tabs';
+export * from './lib/tag';
 export * from './lib/toast';
+export * from './lib/tree';
+export * from './lib/tree-select';
