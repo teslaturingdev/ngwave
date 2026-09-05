@@ -85,14 +85,14 @@ const ALL_SUGGESTIONS: Suggestion[] = [
           <h3 class="text-sm font-semibold text-surface-900">Advanced filters</h3>
 
           <p class="mt-3 text-xs font-medium uppercase tracking-wide text-surface-400">Type</p>
-          <div class="mt-2 space-y-2">
+          <div class="mt-2 flex flex-col items-start gap-2">
             <nw-checkbox [(checked)]="filterDocs" label="Documents" />
             <nw-checkbox [(checked)]="filterPeople" label="People" />
             <nw-checkbox [(checked)]="filterProjects" label="Projects" />
           </div>
 
           <p class="mt-4 text-xs font-medium uppercase tracking-wide text-surface-400">Date range</p>
-          <div class="mt-2 space-y-2">
+          <div class="mt-2 flex flex-col items-start gap-2">
             <nw-checkbox [(checked)]="filterLastWeek" label="Last 7 days" />
             <nw-checkbox [(checked)]="filterLastMonth" label="Last 30 days" />
           </div>
