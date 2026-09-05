@@ -8,6 +8,8 @@
     "build": "ng build",
     "prebuild:docs": "node scripts/write-env.mjs",
     "build:docs": "ng build docs",
+    "build:templates": "ng build ngwave-templates",
+    "start:templates": "ng serve ngwave-templates --port 4300",
     "build:lib": "ng build ngwave-ui",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

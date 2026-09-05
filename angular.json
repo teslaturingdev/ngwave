@@ -107,6 +107,67 @@
           "builder": "@angular/build:unit-test"
         }
       }
+    },
+    "ngwave-templates": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/ngwave-templates",
+      "sourceRoot": "projects/ngwave-templates/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/ngwave-templates/src/main.ts",
+            "tsConfig": "projects/ngwave-templates/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/ngwave-templates/public"
+              }
+            ],
+            "styles": ["projects/ngwave-templates/src/styles.css"]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "800kB",
+                  "maximumError": "1.5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "ngwave-templates:build:production"
+            },
+            "development": {
+              "buildTarget": "ngwave-templates:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
     }
   }
 }
