@@ -1,23 +1,23 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NwAvatarComponent, NwCardComponent, NwDialogComponent, NwInputTextComponent } from '@ngwave/ui';
+import { NwAvatarComponent, NwCardComponent, NwDialogComponent, NwIconComponent, NwIconName, NwInputTextComponent } from '@ngwave/ui';
 
 interface CommandItem {
-  icon: string;
+  icon: NwIconName;
   label: string;
   group: string;
   shortcut?: string;
 }
 
 const COMMANDS: CommandItem[] = [
-  { icon: '📄', label: 'Create new document', group: 'Actions', shortcut: '⌘N' },
-  { icon: '👥', label: 'Invite team member', group: 'Actions' },
-  { icon: '⚙', label: 'Open settings', group: 'Actions', shortcut: '⌘,' },
-  { icon: '📊', label: 'Go to Analytics', group: 'Navigate' },
-  { icon: '📁', label: 'Go to Projects', group: 'Navigate' },
-  { icon: '💬', label: 'Go to Messages', group: 'Navigate' },
-  { icon: '🌙', label: 'Toggle dark mode', group: 'Preferences' },
-  { icon: '⎋', label: 'Sign out', group: 'Preferences' },
+  { icon: 'file-text', label: 'Create new document', group: 'Actions', shortcut: '⌘N' },
+  { icon: 'users', label: 'Invite team member', group: 'Actions' },
+  { icon: 'settings', label: 'Open settings', group: 'Actions', shortcut: '⌘,' },
+  { icon: 'bar-chart', label: 'Go to Analytics', group: 'Navigate' },
+  { icon: 'folder', label: 'Go to Projects', group: 'Navigate' },
+  { icon: 'message-circle', label: 'Go to Messages', group: 'Navigate' },
+  { icon: 'moon', label: 'Toggle dark mode', group: 'Preferences' },
+  { icon: 'log-out', label: 'Sign out', group: 'Preferences' },
 ];
 
 @Component({
@@ -28,12 +28,16 @@ const COMMANDS: CommandItem[] = [
     NwAvatarComponent,
     NwCardComponent,
     NwDialogComponent,
+    NwIconComponent,
     NwInputTextComponent,
   ],
   template: `
     <div class="min-h-full bg-surface-50">
       <div class="border-b border-surface-200 bg-surface-0 px-6 py-2">
-        <a routerLink="/ui-blocks" class="text-sm text-surface-500 hover:text-surface-900">← All UI Blocks</a>
+        <a routerLink="/ui-blocks" class="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-surface-900">
+          <nw-icon name="arrow-left" [size]="15" />
+          All UI Blocks
+        </a>
       </div>
 
       <header class="flex items-center gap-4 border-b border-surface-200 bg-surface-0 px-6 h-16">
@@ -50,7 +54,7 @@ const COMMANDS: CommandItem[] = [
           (click)="open()"
           class="flex flex-1 max-w-md items-center gap-2 rounded-nw border border-surface-200 bg-surface-50 px-3 py-2 text-sm text-surface-400 hover:border-surface-300 hover:bg-surface-100"
         >
-          <span>⌕</span>
+          <nw-icon name="search" [size]="16" />
           <span class="flex-1 text-left">Search or jump to…</span>
           <kbd class="rounded border border-surface-300 bg-surface-0 px-1.5 py-0.5 text-xs text-surface-500"
             >⌘K</kbd
@@ -75,7 +79,7 @@ const COMMANDS: CommandItem[] = [
                   (click)="open()"
                   class="flex items-center gap-3 rounded-nw border border-surface-200 px-3 py-2.5 text-left hover:border-nw-300 hover:bg-nw-50/40"
                 >
-                  <span class="text-base">{{ cmd.icon }}</span>
+                  <nw-icon [name]="cmd.icon" [size]="17" class="text-surface-500" />
                   <span class="text-sm font-medium text-surface-800">{{ cmd.label }}</span>
                 </button>
               }
@@ -100,7 +104,7 @@ const COMMANDS: CommandItem[] = [
       <nw-dialog [(visible)]="visible" [closable]="false" [dismissableMask]="true" width="36rem" position="top">
         <div class="-m-6">
           <div class="flex items-center gap-3 border-b border-surface-100 px-4 py-3">
-            <span class="text-surface-400">⌕</span>
+            <nw-icon name="search" [size]="17" class="text-surface-400" />
             <nw-input-text
               [(value)]="query"
               placeholder="Type a command or search…"
@@ -120,7 +124,7 @@ const COMMANDS: CommandItem[] = [
                   type="button"
                   class="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-surface-50"
                 >
-                  <span class="w-5 text-center">{{ cmd.icon }}</span>
+                  <nw-icon [name]="cmd.icon" [size]="16" class="text-surface-400" />
                   <span class="flex-1 text-sm text-surface-900">{{ cmd.label }}</span>
                   @if (cmd.shortcut) {
                     <kbd class="rounded border border-surface-200 px-1.5 py-0.5 text-xs text-surface-400">{{

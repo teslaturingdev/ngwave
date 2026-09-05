@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NwAvatarComponent, NwCardComponent, NwDividerComponent, NwTagComponent } from '@ngwave/ui';
+import { NwAvatarComponent, NwCardComponent, NwDividerComponent, NwIconComponent, NwIconName, NwTagComponent } from '@ngwave/ui';
 
 interface NavItem {
-  icon: string;
+  icon: NwIconName;
   label: string;
   active?: boolean;
   badge?: string;
@@ -21,28 +21,34 @@ interface StatCard {
   trend: 'up' | 'down';
 }
 
+interface ProjectRow {
+  icon: NwIconName;
+  name: string;
+  status: 'On track' | 'At risk';
+}
+
 const GROUPS: NavGroup[] = [
   {
     label: 'Main',
     items: [
-      { icon: '⌂', label: 'Overview', active: true },
-      { icon: '📊', label: 'Analytics' },
-      { icon: '📁', label: 'Projects', badge: '12' },
+      { icon: 'home', label: 'Overview', active: true },
+      { icon: 'bar-chart', label: 'Analytics' },
+      { icon: 'folder', label: 'Projects', badge: '12' },
     ],
   },
   {
     label: 'Workspace',
     items: [
-      { icon: '👥', label: 'Team' },
-      { icon: '💬', label: 'Messages', badge: '3' },
-      { icon: '🔔', label: 'Notifications' },
+      { icon: 'users', label: 'Team' },
+      { icon: 'message-circle', label: 'Messages', badge: '3' },
+      { icon: 'bell', label: 'Notifications' },
     ],
   },
   {
     label: 'Preferences',
     items: [
-      { icon: '⚙', label: 'Settings' },
-      { icon: '❔', label: 'Help & support' },
+      { icon: 'settings', label: 'Settings' },
+      { icon: 'help-circle', label: 'Help & support' },
     ],
   },
 ];
@@ -53,14 +59,30 @@ const STATS: StatCard[] = [
   { label: 'Team members', value: '9', delta: '1 new', trend: 'up' },
 ];
 
+const PROJECTS: ProjectRow[] = [
+  { icon: 'trending-up', name: 'Q3 Growth Strategy', status: 'On track' },
+  { icon: 'palette', name: 'Design System v2', status: 'At risk' },
+  { icon: 'plug', name: 'API Migration', status: 'On track' },
+];
+
 @Component({
   selector: 'app-collapsible-sidebar-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NwAvatarComponent, NwCardComponent, NwDividerComponent, NwTagComponent],
+  imports: [
+    RouterLink,
+    NwAvatarComponent,
+    NwCardComponent,
+    NwDividerComponent,
+    NwIconComponent,
+    NwTagComponent,
+  ],
   template: `
     <div class="flex flex-col min-h-full bg-surface-50">
     <div class="border-b border-surface-200 bg-surface-0 px-6 py-2">
-      <a routerLink="/ui-blocks" class="text-sm text-surface-500 hover:text-surface-900">← All UI Blocks</a>
+      <a routerLink="/ui-blocks" class="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-surface-900">
+        <nw-icon name="arrow-left" [size]="15" />
+        All UI Blocks
+      </a>
     </div>
     <div class="flex flex-1 min-h-0">
       <aside
@@ -101,7 +123,7 @@ const STATS: StatCard[] = [
                     @if (item.active) {
                       <span class="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full bg-nw-600"></span>
                     }
-                    <span class="w-5 shrink-0 text-center text-base">{{ item.icon }}</span>
+                    <nw-icon [name]="item.icon" [size]="18" class="shrink-0" />
                     @if (!collapsed()) {
                       <span class="flex-1 text-left truncate">{{ item.label }}</span>
                       @if (item.badge) {
@@ -133,7 +155,7 @@ const STATS: StatCard[] = [
             class="flex w-full items-center gap-3 rounded-nw px-2.5 py-2 text-sm text-surface-500 hover:bg-surface-50"
             [class.justify-center]="collapsed()"
           >
-            <span class="w-5 text-center">{{ collapsed() ? '»' : '«' }}</span>
+            <nw-icon [name]="collapsed() ? 'chevron-right' : 'chevron-left'" [size]="16" />
             @if (!collapsed()) {
               <span>Collapse</span>
             }
@@ -169,8 +191,12 @@ const STATS: StatCard[] = [
             <div class="rounded-nw-lg border border-surface-200 bg-surface-0 p-4">
               <p class="text-xs font-medium uppercase tracking-wide text-surface-400">{{ s.label }}</p>
               <p class="mt-1.5 text-2xl font-bold text-surface-900">{{ s.value }}</p>
-              <p class="mt-1 text-xs font-medium" [class]="s.trend === 'up' ? 'text-green-600' : 'text-red-600'">
-                {{ s.trend === 'up' ? '↗' : '↘' }} {{ s.delta }}
+              <p
+                class="mt-1 flex items-center gap-1 text-xs font-medium"
+                [class]="s.trend === 'up' ? 'text-green-600' : 'text-red-600'"
+              >
+                <nw-icon [name]="s.trend === 'up' ? 'arrow-up-right' : 'arrow-down-right'" [size]="13" />
+                {{ s.delta }}
               </p>
             </div>
           }
@@ -182,9 +208,10 @@ const STATS: StatCard[] = [
               <div class="flex items-center justify-between py-3 first:pt-0 last:pb-0">
                 <div class="flex items-center gap-3">
                   <span
-                    class="inline-flex h-8 w-8 items-center justify-center rounded-nw bg-nw-50 text-nw-600 text-sm"
-                    >{{ p.icon }}</span
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-nw bg-nw-50 text-nw-600"
                   >
+                    <nw-icon [name]="p.icon" [size]="16" />
+                  </span>
                   <p class="text-sm font-medium text-surface-900">{{ p.name }}</p>
                 </div>
                 <nw-tag [value]="p.status" [severity]="p.status === 'On track' ? 'success' : 'warn'" [rounded]="true" />
@@ -201,10 +228,5 @@ export class CollapsibleSidebarBlockPageComponent {
   protected readonly collapsed = signal(false);
   protected readonly groups = GROUPS;
   protected readonly stats = STATS;
-
-  protected readonly projects = [
-    { icon: '📈', name: 'Q3 Growth Strategy', status: 'On track' },
-    { icon: '🎨', name: 'Design System v2', status: 'At risk' },
-    { icon: '🔌', name: 'API Migration', status: 'On track' },
-  ];
+  protected readonly projects = PROJECTS;
 }

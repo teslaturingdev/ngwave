@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { NwButtonComponent, NwTagComponent, NwToggleComponent } from '@ngwave/ui';
+import { NwButtonComponent, NwIconComponent, NwTagComponent, NwToggleComponent } from '@ngwave/ui';
 import { RouterLink } from '@angular/router';
 
 interface Plan {
@@ -43,11 +43,14 @@ const PLANS: Plan[] = [
 @Component({
   selector: 'app-pricing-section-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NwButtonComponent, NwTagComponent, NwToggleComponent],
+  imports: [RouterLink, NwButtonComponent, NwIconComponent, NwTagComponent, NwToggleComponent],
   template: `
     <div class="min-h-full bg-surface-0 py-16 px-6">
       <div class="mx-auto max-w-6xl">
-        <a routerLink="/ui-blocks" class="text-sm text-surface-500 hover:text-surface-900">← All UI Blocks</a>
+        <a routerLink="/ui-blocks" class="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-surface-900">
+          <nw-icon name="arrow-left" [size]="15" />
+          All UI Blocks
+        </a>
 
         <div class="mt-8 text-center">
           <span
@@ -117,7 +120,7 @@ const PLANS: Plan[] = [
               <ul class="mt-6 space-y-2.5 flex-1">
                 @for (f of plan.features; track f) {
                   <li class="flex items-start gap-2 text-sm text-surface-600">
-                    <span class="mt-0.5 text-green-600">✓</span>
+                    <nw-icon name="check" [size]="15" class="mt-0.5 text-green-600" />
                     {{ f }}
                   </li>
                 }

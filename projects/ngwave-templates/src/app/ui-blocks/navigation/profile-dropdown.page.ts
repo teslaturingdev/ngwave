@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NwAvatarComponent, NwCardComponent, NwOverlayPanelComponent, NwTagComponent } from '@ngwave/ui';
+import { NwAvatarComponent, NwCardComponent, NwIconComponent, NwIconName, NwOverlayPanelComponent, NwTagComponent } from '@ngwave/ui';
 
 interface MenuLink {
-  icon: string;
+  icon: NwIconName;
   label: string;
   danger?: boolean;
 }
@@ -25,11 +25,14 @@ const STATS: StatCard[] = [
 @Component({
   selector: 'app-profile-dropdown-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NwAvatarComponent, NwCardComponent, NwOverlayPanelComponent, NwTagComponent],
+  imports: [RouterLink, NwAvatarComponent, NwCardComponent, NwIconComponent, NwOverlayPanelComponent, NwTagComponent],
   template: `
     <div class="min-h-full bg-surface-50">
       <div class="border-b border-surface-100 bg-surface-0 px-6 py-2">
-        <a routerLink="/ui-blocks" class="text-sm text-surface-500 hover:text-surface-900">← All UI Blocks</a>
+        <a routerLink="/ui-blocks" class="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-surface-900">
+          <nw-icon name="arrow-left" [size]="15" />
+          All UI Blocks
+        </a>
       </div>
       <header class="flex items-center gap-6 border-b border-surface-200 bg-surface-0 px-6 h-16">
         <div class="flex items-center gap-2 shrink-0">
@@ -57,7 +60,7 @@ const STATS: StatCard[] = [
             class="relative inline-flex h-9 w-9 items-center justify-center rounded-full text-surface-500 hover:bg-surface-100"
             aria-label="Notifications"
           >
-            🔔
+            <nw-icon name="bell" [size]="18" />
             <span class="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-red-500"></span>
           </button>
 
@@ -68,7 +71,7 @@ const STATS: StatCard[] = [
           >
             <nw-avatar label="AK" size="normal" />
             <span class="hidden sm:inline text-sm font-medium text-surface-900">Aisha Khan</span>
-            <span class="text-xs text-surface-400">▾</span>
+            <nw-icon name="chevron-down" [size]="14" class="text-surface-400" />
           </button>
         </div>
       </header>
@@ -95,7 +98,7 @@ const STATS: StatCard[] = [
                 class="flex w-full items-center gap-3 rounded-nw px-2 py-2 text-left text-sm hover:bg-surface-50"
                 [class]="link.danger ? 'text-red-600' : 'text-surface-700'"
               >
-                <span class="w-4 text-center">{{ link.icon }}</span>
+                <nw-icon [name]="link.icon" [size]="16" />
                 {{ link.label }}
               </button>
             }
@@ -112,8 +115,12 @@ const STATS: StatCard[] = [
             <div class="rounded-nw-lg border border-surface-200 bg-surface-0 p-4">
               <p class="text-xs font-medium uppercase tracking-wide text-surface-400">{{ s.label }}</p>
               <p class="mt-1.5 text-2xl font-bold text-surface-900">{{ s.value }}</p>
-              <p class="mt-1 text-xs font-medium" [class]="s.trend === 'up' ? 'text-green-600' : 'text-red-600'">
-                {{ s.trend === 'up' ? '↗' : '↘' }} {{ s.delta }}
+              <p
+                class="mt-1 flex items-center gap-1 text-xs font-medium"
+                [class]="s.trend === 'up' ? 'text-green-600' : 'text-red-600'"
+              >
+                <nw-icon [name]="s.trend === 'up' ? 'arrow-up-right' : 'arrow-down-right'" [size]="13" />
+                {{ s.delta }}
               </p>
             </div>
           }
@@ -140,11 +147,11 @@ export class ProfileDropdownBlockPageComponent {
   protected readonly stats = STATS;
 
   protected readonly links: MenuLink[] = [
-    { icon: '👤', label: 'Your profile' },
-    { icon: '⚙', label: 'Settings' },
-    { icon: '💳', label: 'Billing' },
-    { icon: '❔', label: 'Help & support' },
-    { icon: '⎋', label: 'Sign out', danger: true },
+    { icon: 'user', label: 'Your profile' },
+    { icon: 'settings', label: 'Settings' },
+    { icon: 'credit-card', label: 'Billing' },
+    { icon: 'help-circle', label: 'Help & support' },
+    { icon: 'log-out', label: 'Sign out', danger: true },
   ];
 
   protected readonly activity = [

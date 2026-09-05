@@ -1,29 +1,32 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NwButtonComponent, NwDialogComponent, NwInputTextComponent, NwTagComponent } from '@ngwave/ui';
+import { NwButtonComponent, NwDialogComponent, NwIconComponent, NwIconName, NwInputTextComponent, NwTagComponent } from '@ngwave/ui';
 
 interface Project {
-  icon: string;
+  icon: NwIconName;
   name: string;
   status: 'On track' | 'At risk';
   updated: string;
 }
 
 const PROJECTS: Project[] = [
-  { icon: '📈', name: 'Q3 Growth Strategy', status: 'On track', updated: '2h ago' },
-  { icon: '🎨', name: 'Design System v2', status: 'At risk', updated: '1d ago' },
-  { icon: '🔌', name: 'API Migration', status: 'On track', updated: '3d ago' },
-  { icon: '📦', name: 'Legacy Data Cleanup', status: 'At risk', updated: '1w ago' },
+  { icon: 'trending-up', name: 'Q3 Growth Strategy', status: 'On track', updated: '2h ago' },
+  { icon: 'palette', name: 'Design System v2', status: 'At risk', updated: '1d ago' },
+  { icon: 'plug', name: 'API Migration', status: 'On track', updated: '3d ago' },
+  { icon: 'package', name: 'Legacy Data Cleanup', status: 'At risk', updated: '1w ago' },
 ];
 
 @Component({
   selector: 'app-delete-confirmation-modal-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NwButtonComponent, NwDialogComponent, NwInputTextComponent, NwTagComponent],
+  imports: [RouterLink, NwButtonComponent, NwDialogComponent, NwIconComponent, NwInputTextComponent, NwTagComponent],
   template: `
     <div class="min-h-full bg-surface-50">
       <div class="border-b border-surface-200 bg-surface-0 px-6 py-2">
-        <a routerLink="/ui-blocks" class="text-sm text-surface-500 hover:text-surface-900">← All UI Blocks</a>
+        <a routerLink="/ui-blocks" class="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-surface-900">
+          <nw-icon name="arrow-left" [size]="15" />
+          All UI Blocks
+        </a>
       </div>
 
       <main class="max-w-3xl mx-auto px-6 py-10">
@@ -36,9 +39,10 @@ const PROJECTS: Project[] = [
           @for (p of projects(); track p.name) {
             <div class="flex items-center gap-3 px-4 py-3.5">
               <span
-                class="inline-flex h-9 w-9 items-center justify-center rounded-nw bg-nw-50 text-nw-600 text-sm"
-                >{{ p.icon }}</span
+                class="inline-flex h-9 w-9 items-center justify-center rounded-nw bg-nw-50 text-nw-600"
               >
+                <nw-icon [name]="p.icon" [size]="16" />
+              </span>
               <div class="min-w-0 flex-1">
                 <p class="truncate text-sm font-medium text-surface-900">{{ p.name }}</p>
                 <p class="truncate text-xs text-surface-500">Updated {{ p.updated }}</p>
@@ -50,7 +54,7 @@ const PROJECTS: Project[] = [
                 class="inline-flex h-8 w-8 items-center justify-center rounded-nw text-surface-400 hover:bg-red-50 hover:text-red-600"
                 aria-label="Delete project"
               >
-                🗑
+                <nw-icon name="trash" [size]="16" />
               </button>
             </div>
           }
@@ -60,9 +64,10 @@ const PROJECTS: Project[] = [
       <nw-dialog [(visible)]="visible" width="26rem">
         <div class="-mt-2 flex flex-col items-center text-center">
           <span
-            class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-2xl text-red-600"
-            >⚠</span
+            class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600"
           >
+            <nw-icon name="alert-triangle" [size]="22" />
+          </span>
           <h3 class="mt-4 text-lg font-semibold text-surface-900">Delete "{{ target()?.name }}"?</h3>
           <p class="mt-2 text-sm text-surface-500">
             This action cannot be undone. This will permanently delete the project and remove all

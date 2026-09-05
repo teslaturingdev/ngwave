@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NwButtonComponent, NwInputTextComponent } from '@ngwave/ui';
+import { NwButtonComponent, NwIconComponent, NwInputTextComponent } from '@ngwave/ui';
 import { AuthShellComponent } from './auth-shell.component';
 
 @Component({
   selector: 'app-forgot-password-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, AuthShellComponent, NwButtonComponent, NwInputTextComponent],
+  imports: [RouterLink, AuthShellComponent, NwButtonComponent, NwIconComponent, NwInputTextComponent],
   template: `
     <app-auth-shell
       quote="Support tickets dropped 40% once search actually worked."
@@ -30,9 +30,10 @@ import { AuthShellComponent } from './auth-shell.component';
       } @else {
         <div class="text-center">
           <span
-            class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-600 text-xl"
-            >✓</span
+            class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-600"
           >
+            <nw-icon name="check" [size]="22" />
+          </span>
           <h1 class="mt-4 text-2xl font-bold text-surface-900">Check your email</h1>
           <p class="mt-1.5 text-sm text-surface-500">
             We've sent a password reset link to your inbox.
@@ -41,7 +42,13 @@ import { AuthShellComponent } from './auth-shell.component';
       }
 
       <p class="mt-8 text-center text-sm text-surface-500">
-        <a routerLink="/ui-blocks/login" class="font-medium text-nw-600 hover:text-nw-700">← Back to sign in</a>
+        <a
+          routerLink="/ui-blocks/login"
+          class="inline-flex items-center gap-1 font-medium text-nw-600 hover:text-nw-700"
+        >
+          <nw-icon name="arrow-left" [size]="14" />
+          Back to sign in
+        </a>
       </p>
     </app-auth-shell>
   `,

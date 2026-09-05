@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
-import { NwButtonComponent, NwCardComponent } from '@ngwave/ui';
+import { NwButtonComponent, NwCardComponent, NwIconComponent } from '@ngwave/ui';
 import { BlockPreviewShellComponent } from '../block-preview-shell.component';
 
 interface ChecklistItem {
@@ -11,7 +11,7 @@ interface ChecklistItem {
 @Component({
   selector: 'app-onboarding-checklist-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BlockPreviewShellComponent, NwCardComponent, NwButtonComponent],
+  imports: [BlockPreviewShellComponent, NwCardComponent, NwButtonComponent, NwIconComponent],
   template: `
     <app-block-preview-shell title="Onboarding Checklist" maxWidth="max-w-lg">
       <nw-card>
@@ -46,7 +46,9 @@ interface ChecklistItem {
                 "
                 [attr.aria-label]="item.done ? 'Mark as not done' : 'Mark as done'"
               >
-                ✓
+                @if (item.done) {
+                  <nw-icon name="check" [size]="12" />
+                }
               </button>
               <div class="min-w-0 flex-1">
                 <p
@@ -62,8 +64,9 @@ interface ChecklistItem {
         </ul>
 
         @if (percent() === 100) {
-          <p class="mt-4 rounded-nw bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
-            🎉 All set! Your workspace is ready to go.
+          <p class="mt-4 flex items-center gap-2 rounded-nw bg-green-50 px-3 py-2 text-sm font-medium text-green-700">
+            <nw-icon name="sparkles" [size]="16" />
+            All set! Your workspace is ready to go.
           </p>
         } @else {
           <nw-button variant="primary" size="small" label="Continue setup" [fluid]="true" class="mt-2" />

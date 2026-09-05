@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { NwAvatarComponent } from '@ngwave/ui';
+import { NwAvatarComponent, NwIconComponent, NwIconName } from '@ngwave/ui';
 
 interface NavItem {
   label: string;
-  icon: string;
+  icon: NwIconName;
   path?: string;
 }
 
 @Component({
   selector: 'app-admin-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouterLinkActive, NwAvatarComponent],
+  imports: [RouterLink, RouterLinkActive, NwAvatarComponent, NwIconComponent],
   template: `
     <div class="min-h-full flex bg-surface-50">
       <!-- Sidebar -->
@@ -31,7 +31,7 @@ interface NavItem {
                 routerLinkActive="bg-white/10 text-white font-medium"
                 class="flex items-center gap-2.5 px-3 py-2 rounded-nw text-white/60 hover:bg-white/5 hover:text-white/90"
               >
-                <span class="w-4 text-center" aria-hidden="true">{{ item.icon }}</span>
+                <nw-icon [name]="item.icon" [size]="16" />
                 {{ item.label }}
               </a>
             } @else {
@@ -39,7 +39,7 @@ interface NavItem {
                 href="javascript:void(0)"
                 class="flex items-center gap-2.5 px-3 py-2 rounded-nw text-white/60 hover:bg-white/5 hover:text-white/90"
               >
-                <span class="w-4 text-center" aria-hidden="true">{{ item.icon }}</span>
+                <nw-icon [name]="item.icon" [size]="16" />
                 {{ item.label }}
               </a>
             }
@@ -71,7 +71,7 @@ interface NavItem {
               class="relative h-9 w-9 rounded-nw border border-surface-200 flex items-center justify-center text-surface-500 hover:bg-surface-100"
               aria-label="Notifications"
             >
-              🔔
+              <nw-icon name="bell" [size]="18" />
               <span class="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-red-500"></span>
             </button>
             <nw-avatar label="SP" size="normal" />
@@ -91,10 +91,10 @@ export class AdminShellComponent {
   readonly pageSubtitle = input('');
 
   protected readonly navItems: NavItem[] = [
-    { label: 'Dashboard', icon: '◧', path: '/admin-dashboard' },
-    { label: 'Users', icon: '◐', path: '/admin-users' },
-    { label: 'Files', icon: '▤', path: '/admin-files' },
-    { label: 'Analytics', icon: '▲' },
-    { label: 'Settings', icon: '⚙' },
+    { label: 'Dashboard', icon: 'layout-dashboard', path: '/admin-dashboard' },
+    { label: 'Users', icon: 'users', path: '/admin-users' },
+    { label: 'Files', icon: 'folder', path: '/admin-files' },
+    { label: 'Analytics', icon: 'bar-chart' },
+    { label: 'Settings', icon: 'settings' },
   ];
 }

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core';
-import { NwOverlayPanelComponent } from '@ngwave/ui';
+import { NwIconComponent, NwIconName, NwOverlayPanelComponent } from '@ngwave/ui';
 import { BlockPreviewShellComponent } from '../block-preview-shell.component';
 
 interface NotificationItem {
-  icon: string;
+  icon: NwIconName;
   iconBg: string;
   iconColor: string;
   title: string;
@@ -14,17 +14,17 @@ interface NotificationItem {
 @Component({
   selector: 'app-notification-panel-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BlockPreviewShellComponent, NwOverlayPanelComponent],
+  imports: [BlockPreviewShellComponent, NwIconComponent, NwOverlayPanelComponent],
   template: `
     <app-block-preview-shell title="Notification Dropdown Panel" maxWidth="max-w-sm">
       <div class="flex justify-center">
         <button
           type="button"
           (click)="panel().toggle($event)"
-          class="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-surface-200 bg-surface-0 text-lg text-surface-600 hover:bg-surface-50"
+          class="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-surface-200 bg-surface-0 text-surface-600 hover:bg-surface-50"
           aria-label="Notifications"
         >
-          🔔
+          <nw-icon name="bell" [size]="19" />
           <span
             class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-surface-0"
           ></span>
@@ -59,10 +59,11 @@ interface NotificationItem {
             @for (n of notifications; track n.title) {
               <div class="flex gap-3 rounded-nw px-1 py-2.5 hover:bg-surface-50">
                 <span
-                  class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm"
+                  class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
                   [class]="n.iconBg + ' ' + n.iconColor"
-                  >{{ n.icon }}</span
                 >
+                  <nw-icon [name]="n.icon" [size]="16" />
+                </span>
                 <div class="min-w-0 flex-1">
                   <p class="text-sm font-medium text-surface-900">{{ n.title }}</p>
                   <p class="text-xs text-surface-500 line-clamp-1">{{ n.description }}</p>
@@ -73,8 +74,12 @@ interface NotificationItem {
           </div>
 
           <div class="mt-2 border-t border-surface-100 pt-3 text-center">
-            <button type="button" class="text-sm font-medium text-nw-600 hover:text-nw-700">
-              Open notification center →
+            <button
+              type="button"
+              class="inline-flex items-center gap-1 text-sm font-medium text-nw-600 hover:text-nw-700"
+            >
+              Open notification center
+              <nw-icon name="arrow-right" [size]="14" />
             </button>
           </div>
         </div>
@@ -88,10 +93,10 @@ export class NotificationPanelBlockPageComponent {
   protected readonly panel = viewChild.required(NwOverlayPanelComponent);
 
   protected readonly notifications: NotificationItem[] = [
-    { icon: '✓', iconBg: 'bg-green-100', iconColor: 'text-green-700', title: 'Deployment succeeded', description: 'ngwave-templates was deployed to production.', time: '2m' },
-    { icon: '💬', iconBg: 'bg-sky-100', iconColor: 'text-sky-700', title: 'New comment', description: 'Aisha commented on "Q3 roadmap review".', time: '18m' },
-    { icon: '⚠', iconBg: 'bg-amber-100', iconColor: 'text-amber-700', title: 'Approval needed', description: 'A refund request is waiting on your review.', time: '1h' },
-    { icon: '👥', iconBg: 'bg-nw-100', iconColor: 'text-nw-700', title: 'Team invite accepted', description: 'Marcus joined the Design workspace.', time: '3h' },
-    { icon: '📦', iconBg: 'bg-surface-100', iconColor: 'text-surface-600', title: 'Weekly report ready', description: 'Your analytics summary for last week is ready.', time: '1d' },
+    { icon: 'check', iconBg: 'bg-green-100', iconColor: 'text-green-700', title: 'Deployment succeeded', description: 'ngwave-templates was deployed to production.', time: '2m' },
+    { icon: 'message-circle', iconBg: 'bg-sky-100', iconColor: 'text-sky-700', title: 'New comment', description: 'Aisha commented on "Q3 roadmap review".', time: '18m' },
+    { icon: 'alert-triangle', iconBg: 'bg-amber-100', iconColor: 'text-amber-700', title: 'Approval needed', description: 'A refund request is waiting on your review.', time: '1h' },
+    { icon: 'users', iconBg: 'bg-nw-100', iconColor: 'text-nw-700', title: 'Team invite accepted', description: 'Marcus joined the Design workspace.', time: '3h' },
+    { icon: 'package', iconBg: 'bg-surface-100', iconColor: 'text-surface-600', title: 'Weekly report ready', description: 'Your analytics summary for last week is ready.', time: '1d' },
   ];
 }

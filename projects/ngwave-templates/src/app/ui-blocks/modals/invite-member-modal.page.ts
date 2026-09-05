@@ -5,6 +5,7 @@ import {
   NwButtonComponent,
   NwDialogComponent,
   NwDropdownComponent,
+  NwIconComponent,
   NwInputTextComponent,
   NwTagComponent,
 } from '@ngwave/ui';
@@ -38,13 +39,17 @@ const MEMBERS: Member[] = [
     NwButtonComponent,
     NwDialogComponent,
     NwDropdownComponent,
+    NwIconComponent,
     NwInputTextComponent,
     NwTagComponent,
   ],
   template: `
     <div class="min-h-full bg-surface-50">
       <div class="border-b border-surface-200 bg-surface-0 px-6 py-2">
-        <a routerLink="/ui-blocks" class="text-sm text-surface-500 hover:text-surface-900">← All UI Blocks</a>
+        <a routerLink="/ui-blocks" class="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-surface-900">
+          <nw-icon name="arrow-left" [size]="15" />
+          All UI Blocks
+        </a>
       </div>
 
       <main class="max-w-3xl mx-auto px-6 py-10">
@@ -53,7 +58,12 @@ const MEMBERS: Member[] = [
             <h1 class="text-lg font-semibold text-surface-900">Team members</h1>
             <p class="mt-1 text-sm text-surface-500">{{ members().length }} people in this workspace.</p>
           </div>
-          <nw-button variant="primary" label="+ Invite member" (click)="visible.set(true)" />
+          <nw-button variant="primary" (click)="visible.set(true)">
+            <span class="inline-flex items-center gap-1.5">
+              <nw-icon name="plus" [size]="16" />
+              Invite member
+            </span>
+          </nw-button>
         </div>
 
         <div class="mt-6 rounded-nw-lg border border-surface-200 bg-surface-0 divide-y divide-surface-100">

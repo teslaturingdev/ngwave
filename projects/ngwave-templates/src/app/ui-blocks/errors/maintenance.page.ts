@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NwButtonComponent } from '@ngwave/ui';
+import { NwButtonComponent, NwIconComponent } from '@ngwave/ui';
 
 @Component({
   selector: 'app-maintenance-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NwButtonComponent],
+  imports: [NwButtonComponent, NwIconComponent],
   template: `
     <div class="min-h-full relative flex items-center justify-center overflow-hidden bg-surface-0 px-6">
       <div
@@ -14,9 +14,10 @@ import { NwButtonComponent } from '@ngwave/ui';
 
       <div class="relative text-center max-w-md">
         <span
-          class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-amber-500 text-3xl"
-          >🛠</span
+          class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-amber-500"
         >
+          <nw-icon name="wrench" [size]="28" />
+        </span>
         <h1 class="mt-6 text-3xl font-bold text-surface-900">We'll be right back</h1>
         <p class="mt-3 text-surface-600">
           Wavelength is undergoing scheduled maintenance. We expect to be back

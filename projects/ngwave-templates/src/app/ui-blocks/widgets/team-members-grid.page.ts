@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NwAvatarComponent, NwTagComponent } from '@ngwave/ui';
+import { NwAvatarComponent, NwIconComponent, NwTagComponent } from '@ngwave/ui';
 import { BlockPreviewShellComponent } from '../block-preview-shell.component';
 
 interface TeamMember {
@@ -12,7 +12,7 @@ interface TeamMember {
 @Component({
   selector: 'app-team-members-grid-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BlockPreviewShellComponent, NwAvatarComponent, NwTagComponent],
+  imports: [BlockPreviewShellComponent, NwAvatarComponent, NwIconComponent, NwTagComponent],
   template: `
     <app-block-preview-shell title="Team Members Grid" maxWidth="max-w-4xl">
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -36,7 +36,7 @@ interface TeamMember {
               class="absolute top-2 right-2 h-7 w-7 rounded-nw text-surface-400 hover:bg-surface-100 hover:text-surface-700"
               aria-label="Member options"
             >
-              ⋯
+              <nw-icon name="more-horizontal" [size]="16" />
             </button>
           </div>
         }

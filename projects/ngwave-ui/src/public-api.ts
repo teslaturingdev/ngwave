@@ -18,6 +18,7 @@ export * from './lib/divider';
 export * from './lib/dropdown';
 export * from './lib/fieldset';
 export * from './lib/file-upload';
+export * from './lib/icon';
 export * from './lib/input';
 export * from './lib/listbox';
 export * from './lib/overlay-panel';

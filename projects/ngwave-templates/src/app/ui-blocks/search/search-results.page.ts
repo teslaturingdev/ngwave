@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NwAvatarComponent, NwCheckboxComponent, NwInputTextComponent, NwTagComponent } from '@ngwave/ui';
+import { NwAvatarComponent, NwCheckboxComponent, NwIconComponent, NwInputTextComponent, NwTagComponent } from '@ngwave/ui';
 
 interface FilterGroup {
   label: string;
@@ -30,14 +30,30 @@ const RESULTS: ResultItem[] = [
 @Component({
   selector: 'app-search-results-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NwInputTextComponent, NwCheckboxComponent, NwAvatarComponent, NwTagComponent],
+  imports: [RouterLink, NwIconComponent, NwInputTextComponent, NwCheckboxComponent, NwAvatarComponent, NwTagComponent],
   template: `
     <div class="min-h-full bg-slate-950 text-slate-100">
       <header class="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
         <div class="mx-auto flex max-w-6xl items-center gap-4 px-6 h-16">
-          <a routerLink="/ui-blocks" class="text-sm text-slate-400 hover:text-slate-100">← All UI Blocks</a>
-          <div class="flex-1 max-w-xl">
-            <nw-input-text [(value)]="query" placeholder="Search everything…" iconLeft="⌕" [fluid]="true" />
+          <a
+            routerLink="/ui-blocks"
+            class="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-100"
+          >
+            <nw-icon name="arrow-left" [size]="15" />
+            All UI Blocks
+          </a>
+          <div class="relative flex-1 max-w-xl">
+            <nw-icon
+              name="search"
+              [size]="17"
+              class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none z-10"
+            />
+            <nw-input-text
+              [(value)]="query"
+              placeholder="Search everything…"
+              iconLeft="pi pi-search"
+              [fluid]="true"
+            />
           </div>
           <nw-avatar label="You" size="normal" />
         </div>

@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { NwIconComponent, NwIconName } from '@ngwave/ui';
 import { BlockPreviewShellComponent } from '../block-preview-shell.component';
 
 interface Stat {
-  icon: string;
+  icon: NwIconName;
   iconBg: string;
   iconColor: string;
   cardBg: string;
@@ -15,7 +16,7 @@ interface Stat {
 @Component({
   selector: 'app-stat-cards-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BlockPreviewShellComponent],
+  imports: [BlockPreviewShellComponent, NwIconComponent],
   template: `
     <app-block-preview-shell title="Stat Cards Row" maxWidth="max-w-5xl">
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -26,10 +27,11 @@ interface Stat {
               aria-hidden="true"
             ></div>
             <span
-              class="relative inline-flex h-10 w-10 items-center justify-center rounded-nw text-lg"
+              class="relative inline-flex h-10 w-10 items-center justify-center rounded-nw"
               [class]="s.iconBg + ' ' + s.iconColor"
-              >{{ s.icon }}</span
             >
+              <nw-icon [name]="s.icon" [size]="19" />
+            </span>
             <p class="relative mt-4 text-xs font-semibold uppercase tracking-wide text-surface-500">
               {{ s.label }}
             </p>
@@ -38,7 +40,7 @@ interface Stat {
               class="relative mt-1.5 text-sm font-medium flex items-center gap-1"
               [class]="s.trend === 'up' ? 'text-green-600' : 'text-red-600'"
             >
-              <span>{{ s.trend === 'up' ? '↗' : '↘' }}</span>
+              <nw-icon [name]="s.trend === 'up' ? 'arrow-up-right' : 'arrow-down-right'" [size]="14" />
               {{ s.delta }}
             </p>
           </div>
@@ -49,9 +51,9 @@ interface Stat {
 })
 export class StatCardsBlockPageComponent {
   protected readonly stats: Stat[] = [
-    { icon: '$', iconBg: 'bg-green-100', iconColor: 'text-green-700', cardBg: 'bg-green-50/60', label: 'Net Revenue', value: '$94.2K', delta: '9.4%', trend: 'up' },
-    { icon: '👥', iconBg: 'bg-sky-100', iconColor: 'text-sky-700', cardBg: 'bg-sky-50/60', label: 'Qualified Leads', value: '1,284', delta: '6.1%', trend: 'up' },
-    { icon: '⏱', iconBg: 'bg-amber-100', iconColor: 'text-amber-700', cardBg: 'bg-amber-50/60', label: 'Avg. Cycle Time', value: '4.2d', delta: '3.5%', trend: 'down' },
-    { icon: '🛡', iconBg: 'bg-nw-100', iconColor: 'text-nw-700', cardBg: 'bg-nw-50/60', label: 'Retention', value: '92.7%', delta: '1.8%', trend: 'up' },
+    { icon: 'dollar-sign', iconBg: 'bg-green-100', iconColor: 'text-green-700', cardBg: 'bg-green-50/60', label: 'Net Revenue', value: '$94.2K', delta: '9.4%', trend: 'up' },
+    { icon: 'users', iconBg: 'bg-sky-100', iconColor: 'text-sky-700', cardBg: 'bg-sky-50/60', label: 'Qualified Leads', value: '1,284', delta: '6.1%', trend: 'up' },
+    { icon: 'clock', iconBg: 'bg-amber-100', iconColor: 'text-amber-700', cardBg: 'bg-amber-50/60', label: 'Avg. Cycle Time', value: '4.2d', delta: '3.5%', trend: 'down' },
+    { icon: 'shield', iconBg: 'bg-nw-100', iconColor: 'text-nw-700', cardBg: 'bg-nw-50/60', label: 'Retention', value: '92.7%', delta: '1.8%', trend: 'up' },
   ];
 }

@@ -5,6 +5,8 @@ import {
   NwButtonComponent,
   NwCardComponent,
   NwCheckboxComponent,
+  NwIconComponent,
+  NwIconName,
   NwInputTextComponent,
   NwTextareaComponent,
   NwToggleComponent,
@@ -15,15 +17,15 @@ type SettingsTab = 'profile' | 'account' | 'notifications' | 'billing' | 'securi
 interface TabItem {
   id: SettingsTab;
   label: string;
-  icon: string;
+  icon: NwIconName;
 }
 
 const TABS: TabItem[] = [
-  { id: 'profile', label: 'Profile', icon: '👤' },
-  { id: 'account', label: 'Account', icon: '⚙' },
-  { id: 'notifications', label: 'Notifications', icon: '🔔' },
-  { id: 'billing', label: 'Billing', icon: '💳' },
-  { id: 'security', label: 'Security', icon: '🔒' },
+  { id: 'profile', label: 'Profile', icon: 'user' },
+  { id: 'account', label: 'Account', icon: 'settings' },
+  { id: 'notifications', label: 'Notifications', icon: 'bell' },
+  { id: 'billing', label: 'Billing', icon: 'credit-card' },
+  { id: 'security', label: 'Security', icon: 'lock' },
 ];
 
 @Component({
@@ -35,6 +37,7 @@ const TABS: TabItem[] = [
     NwButtonComponent,
     NwCardComponent,
     NwCheckboxComponent,
+    NwIconComponent,
     NwInputTextComponent,
     NwTextareaComponent,
     NwToggleComponent,
@@ -42,7 +45,10 @@ const TABS: TabItem[] = [
   template: `
     <div class="min-h-full bg-surface-50">
       <header class="border-b border-surface-200 bg-surface-0 px-6 py-4">
-        <a routerLink="/ui-blocks" class="text-sm text-surface-500 hover:text-surface-900">← All UI Blocks</a>
+        <a routerLink="/ui-blocks" class="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-surface-900">
+          <nw-icon name="arrow-left" [size]="15" />
+          All UI Blocks
+        </a>
         <h1 class="mt-2 text-xl font-semibold text-surface-900">Settings</h1>
       </header>
 
@@ -59,7 +65,7 @@ const TABS: TabItem[] = [
                   : 'text-surface-600 hover:bg-surface-100 hover:text-surface-900'
               "
             >
-              <span class="w-5 text-center">{{ tab.icon }}</span>
+              <nw-icon [name]="tab.icon" [size]="17" />
               {{ tab.label }}
             </button>
           }
@@ -124,7 +130,7 @@ const TABS: TabItem[] = [
                 </div>
                 <div class="mt-4 flex items-center justify-between rounded-nw-lg border border-surface-200 p-4">
                   <div class="flex items-center gap-3">
-                    <span class="text-lg">💳</span>
+                    <nw-icon name="credit-card" [size]="20" class="text-surface-500" />
                     <p class="text-sm text-surface-700">Visa ending in 4242</p>
                   </div>
                   <nw-button variant="text" size="small" label="Update" />

@@ -1,15 +1,18 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NwAvatarComponent, NwButtonComponent, NwInputTextComponent, NwTagComponent } from '@ngwave/ui';
+import { NwAvatarComponent, NwButtonComponent, NwIconComponent, NwInputTextComponent, NwTagComponent } from '@ngwave/ui';
 
 @Component({
   selector: 'app-table-toolbar-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NwAvatarComponent, NwButtonComponent, NwInputTextComponent, NwTagComponent],
+  imports: [RouterLink, NwAvatarComponent, NwButtonComponent, NwIconComponent, NwInputTextComponent, NwTagComponent],
   template: `
     <div class="min-h-full bg-surface-50">
       <div class="border-b border-surface-200 bg-surface-0 px-6 py-2">
-        <a routerLink="/ui-blocks" class="text-sm text-surface-500 hover:text-surface-900">← All UI Blocks</a>
+        <a routerLink="/ui-blocks" class="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-surface-900">
+          <nw-icon name="arrow-left" [size]="15" />
+          All UI Blocks
+        </a>
       </div>
 
       <main class="max-w-4xl mx-auto px-6 py-10">
@@ -18,8 +21,13 @@ import { NwAvatarComponent, NwButtonComponent, NwInputTextComponent, NwTagCompon
 
         <div class="mt-6 rounded-nw-lg border border-surface-200 bg-surface-0 overflow-hidden shadow-nw-sm">
           <div class="flex flex-wrap items-center gap-3 border-b border-surface-100 p-4">
-            <div class="min-w-52 flex-1">
-              <nw-input-text placeholder="Search members…" iconLeft="⌕" [fluid]="true" size="normal" />
+            <div class="relative min-w-52 flex-1">
+              <nw-icon
+                name="search"
+                [size]="16"
+                class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none z-10"
+              />
+              <nw-input-text placeholder="Search members…" iconLeft="pi pi-search" [fluid]="true" size="normal" />
             </div>
 
             <div class="flex items-center gap-2">
@@ -27,13 +35,15 @@ import { NwAvatarComponent, NwButtonComponent, NwInputTextComponent, NwTagCompon
                 type="button"
                 class="inline-flex h-9 items-center gap-1.5 rounded-nw border border-surface-200 px-3 text-sm font-medium text-surface-700 hover:bg-surface-50"
               >
-                Role: All ▾
+                Role: All
+                <nw-icon name="chevron-down" [size]="14" />
               </button>
               <button
                 type="button"
                 class="inline-flex h-9 items-center gap-1.5 rounded-nw border border-surface-200 px-3 text-sm font-medium text-surface-700 hover:bg-surface-50"
               >
-                Status ▾
+                Status
+                <nw-icon name="chevron-down" [size]="14" />
               </button>
             </div>
 

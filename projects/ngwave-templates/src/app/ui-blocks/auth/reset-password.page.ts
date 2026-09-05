@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NwButtonComponent, NwInputTextComponent } from '@ngwave/ui';
+import { NwButtonComponent, NwIconComponent, NwInputTextComponent } from '@ngwave/ui';
 import { AuthShellComponent } from './auth-shell.component';
 
 @Component({
   selector: 'app-reset-password-block',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, AuthShellComponent, NwButtonComponent, NwInputTextComponent],
+  imports: [RouterLink, AuthShellComponent, NwButtonComponent, NwIconComponent, NwInputTextComponent],
   template: `
     <app-auth-shell
       quote="The cleanest onboarding flow our team has ever shipped."
@@ -30,7 +30,13 @@ import { AuthShellComponent } from './auth-shell.component';
       </form>
 
       <p class="mt-8 text-center text-sm text-surface-500">
-        <a routerLink="/ui-blocks/login" class="font-medium text-nw-600 hover:text-nw-700">← Back to sign in</a>
+        <a
+          routerLink="/ui-blocks/login"
+          class="inline-flex items-center gap-1 font-medium text-nw-600 hover:text-nw-700"
+        >
+          <nw-icon name="arrow-left" [size]="14" />
+          Back to sign in
+        </a>
       </p>
     </app-auth-shell>
   `,
