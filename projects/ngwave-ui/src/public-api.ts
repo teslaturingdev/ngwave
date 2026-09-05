@@ -3,8 +3,10 @@
  */
 
 export * from './lib/accordion';
+export * from './lib/alert';
 export * from './lib/autocomplete';
 export * from './lib/avatar';
+export * from './lib/breadcrumb';
 export * from './lib/button';
 export * from './lib/card';
 export * from './lib/cascade-select';
@@ -30,5 +32,6 @@ export * from './lib/steps';
 export * from './lib/tabs';
 export * from './lib/tag';
 export * from './lib/toast';
+export * from './lib/toggle';
 export * from './lib/tree';
 export * from './lib/tree-select';

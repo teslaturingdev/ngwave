@@ -96,6 +96,36 @@ interface Highlight {
 
       <!-- Templates -->
       <main class="flex-1 max-w-5xl w-full mx-auto px-6 py-16">
+        <a
+          routerLink="/ui-blocks"
+          class="group relative block overflow-hidden rounded-nw-lg border border-nw-200 bg-gradient-to-br from-nw-600 to-nw-700 p-8 mb-12 shadow-nw-lg hover:shadow-nw-xl transition-shadow"
+        >
+          <div
+            class="absolute -top-16 -right-16 h-56 w-56 rounded-full bg-white/10 blur-2xl"
+            aria-hidden="true"
+          ></div>
+          <div class="relative flex flex-col sm:flex-row sm:items-center gap-6">
+            <div class="flex-1">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full bg-white/15 text-white text-xs font-medium px-3 py-1"
+              >
+                ✨ New · 23 blocks
+              </span>
+              <h2 class="mt-3 text-2xl font-bold text-white">UI Blocks library</h2>
+              <p class="mt-2 text-sm text-nw-50 max-w-xl">
+                Auth flows, dashboard widgets, search, navigation, pricing, modals and more —
+                ready-made sections you can drop straight into your admin panels and forms.
+              </p>
+            </div>
+            <span
+              class="inline-flex items-center gap-2 shrink-0 rounded-nw bg-white px-5 py-2.5 text-sm font-semibold text-nw-700 group-hover:bg-nw-50 transition-colors"
+            >
+              Explore UI Blocks
+              <span class="transition-transform group-hover:translate-x-0.5">→</span>
+            </span>
+          </div>
+        </a>
+
         <div class="flex items-end justify-between gap-4 mb-8">
           <div>
             <h2 class="text-2xl font-bold text-surface-900">Browse templates</h2>
