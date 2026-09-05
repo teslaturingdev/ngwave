@@ -26,8 +26,11 @@ import { NwButtonComponent } from '@ngwave/ui';
         <a routerLink="/components/button">
           <nw-button size="large">Browse components</nw-button>
         </a>
+        <a href="https://templates.ngwave.dev" target="_blank" rel="noopener">
+          <nw-button size="large" variant="outlined">View templates ↗</nw-button>
+        </a>
         <a routerLink="/changelog">
-          <nw-button size="large" variant="outlined">What's new</nw-button>
+          <nw-button size="large" variant="text">What's new</nw-button>
         </a>
       </div>
 
