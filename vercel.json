@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build:docs",
-  "outputDirectory": "dist/docs/browser",
+  "buildCommand": "npm run build:${NGWAVE_APP:-docs} && rm -rf dist/_deploy && mkdir -p dist/_deploy && cp -r dist/${NGWAVE_APP:-docs}/browser/. dist/_deploy/",
+  "outputDirectory": "dist/_deploy",
   "functions": { "api/migrate-ai.ts": { "maxDuration": 60 } },
   "rewrites": [{ "source": "/((?!api/|@|.*\\.).*)", "destination": "/index.html" }]
 }
