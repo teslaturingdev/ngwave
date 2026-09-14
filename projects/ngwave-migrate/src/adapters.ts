@@ -15,6 +15,22 @@ export interface Adapter {
   mapAttr(attr: ParsedAttr): AttrResult;
 }
 
+/**
+ * PrimeNG registers every compound-word component selector under three
+ * spellings — camelCase (`p-radioButton`), all-lowercase (`p-radiobutton`),
+ * and kebab-case (`p-radio-button`) — confirmed against the real primeng
+ * v19 package source (e.g. `selector: "p-radioButton, p-radiobutton,
+ * p-radio-button"`). Adapters only declare the camelCase sourceTag, so
+ * anything authored with one of the other two spellings would otherwise go
+ * unrecognized. This expands one tag to all three (deduped, so single-word
+ * tags like `p-table` just return themselves).
+ */
+export function primengTagAliases(sourceTag: string): string[] {
+  const lower = sourceTag.toLowerCase();
+  const kebab = sourceTag.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+  return [...new Set([sourceTag, lower, kebab])];
+}
+
 interface Rename {
   to: string;
   /** Force a target kind; otherwise the source kind is preserved. */
@@ -1058,7 +1074,7 @@ export const treeSelectAdapter: Adapter = {
 // (button/input/textarea) and aren't tag names, so they're listed separately.
 // ---------------------------------------------------------------------------
 
-export const SUPPORTED_PRIMENG_TAGS: string[] = [
+const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   buttonAdapter.sourceTag,
   dataTableAdapter.sourceTag,
   dropdownAdapter.sourceTag,
@@ -1097,6 +1113,11 @@ export const SUPPORTED_PRIMENG_TAGS: string[] = [
   splitterPanelAdapter.sourceTag,
   treeAdapter.sourceTag,
   treeSelectAdapter.sourceTag,
+];
+
+/** Every casing alias (see primengTagAliases) of every tag this codemod supports. */
+export const SUPPORTED_PRIMENG_TAGS: string[] = [
+  ...new Set(CANONICAL_SUPPORTED_PRIMENG_TAGS.flatMap(primengTagAliases)),
 ];
 
 export const SUPPORTED_PRIMENG_ATTR_DIRECTIVES: string[] = [

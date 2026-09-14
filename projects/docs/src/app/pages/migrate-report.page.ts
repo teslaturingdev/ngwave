@@ -12,8 +12,18 @@ import { buildCostReport, ComponentCostRow, CostReport } from '@ngwave/report';
 import { NwSpinnerComponent } from '@ngwave/ui';
 import { AuthService } from '../auth.service';
 
+/**
+ * Modern standalone components commonly inline their template as a string
+ * inside the `@Component` decorator instead of a separate .html file (e.g.
+ * `template: \`<p-button ...>\`\`). scanFiles/migrate() are plain regex/string
+ * scanners over file content — they don't care where that content came from
+ * — so letting .ts files through here is enough to catch PrimeNG tags in
+ * inline templates too. .spec.ts/.d.ts are excluded as noise, not signal.
+ */
 function isRelevant(path: string): boolean {
-  return isRelevantPath(path, '.html');
+  const lower = path.toLowerCase();
+  if (lower.endsWith('.spec.ts') || lower.endsWith('.d.ts')) return false;
+  return isRelevantPath(path, '.html') || isRelevantPath(path, '.ts');
 }
 
 @Component({
@@ -76,12 +86,14 @@ function isRelevant(path: string): boolean {
               (click)="filesInput.click()"
               class="rounded-nw bg-surface-100 px-4 py-2.5 text-sm font-medium text-surface-700 transition-colors hover:bg-surface-200"
             >
-              or choose individual .html files
+              or choose individual files
             </button>
           </div>
           <p class="mt-3 text-xs text-surface-400">
-            Only <code>.html</code> template files are read; <code>node_modules</code>,
-            <code>dist</code> and <code>.git</code> are skipped automatically.
+            Reads <code>.html</code> templates and <code>.ts</code> files (for standalone
+            components with an inline <code>template:</code>); <code>node_modules</code>,
+            <code>dist</code>, <code>.git</code> and <code>.spec.ts</code> are skipped
+            automatically.
           </p>
           <input
             #folderInput
@@ -95,7 +107,7 @@ function isRelevant(path: string): boolean {
             #filesInput
             type="file"
             multiple
-            accept=".html"
+            accept=".html,.ts"
             hidden
             (change)="onFilesInput($event)"
           />
@@ -528,7 +540,7 @@ export class MigrateReportPageComponent {
     const relevant = collected.filter((c) => isRelevant(c.path));
     if (!relevant.length) {
       this.error.set(
-        'No .html files found. Choose a folder or files that contain your PrimeNG templates.',
+        'No .html or .ts files found. Choose a folder or files that contain your PrimeNG templates.',
       );
       return;
     }

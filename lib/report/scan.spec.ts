@@ -65,4 +65,30 @@ describe('scanFiles', () => {
     expect(result.tags).toEqual([]);
     expect(result.totalOccurrences).toBe(0);
   });
+
+  it('finds PrimeNG tags inside a .ts file with an inline template (no separate .html)', () => {
+    // Common with modern standalone components — e.g. sakai-ng v19+ ships
+    // zero .html files, every template lives in the @Component decorator.
+    const content = `
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-crud-demo',
+  standalone: true,
+  template: \`
+    <p-table [value]="products" [paginator]="true">
+      <ng-template pTemplate="header">
+        <tr><th>Name</th></tr>
+      </ng-template>
+    </p-table>
+    <p-button label="Save" (click)="save()" />
+  \`,
+})
+export class CrudDemo {}
+`;
+    const result = scanFiles([{ path: 'crud.ts', content }]);
+    expect(result.tags.find((t) => t.tag === 'p-table')?.count).toBe(1);
+    expect(result.tags.find((t) => t.tag === 'p-button')?.count).toBe(1);
+    expect(result.tags.find((t) => t.tag === 'pTemplate')?.count).toBe(1);
+  });
 });

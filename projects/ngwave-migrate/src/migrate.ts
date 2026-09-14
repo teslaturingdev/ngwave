@@ -21,6 +21,7 @@ import {
   listboxAdapter,
   overlayPanelAdapter,
   panelAdapter,
+  primengTagAliases,
   radioAdapter,
   ratingAdapter,
   skeletonAdapter,
@@ -146,44 +147,54 @@ export function migrate(source: string): MigrationResult {
   const imports = new Set<string>();
 
   // --- p-table (element) ---
-  for (const el of findElements(source, 'p-table')) {
-    const { opening, notes: n } = transformOpening(dataTableAdapter, el);
-    edits.push({ start: el.start, end: el.end, replacement: opening });
-    notes.push(...n);
-    imports.add(dataTableAdapter.importName);
+  for (const tag of primengTagAliases('p-table')) {
+    for (const el of findElements(source, tag)) {
+      const { opening, notes: n } = transformOpening(dataTableAdapter, el);
+      edits.push({ start: el.start, end: el.end, replacement: opening });
+      notes.push(...n);
+      imports.add(dataTableAdapter.importName);
 
-    if (!el.selfClosing) {
-      const closeIdx = findMatchingClose(source, 'p-table', el.end);
-      const inner =
-        closeIdx >= 0 ? source.slice(el.end, closeIdx) : source.slice(el.end);
-      notes.push(...scanTemplates(inner));
+      if (!el.selfClosing) {
+        const closeIdx = findMatchingClose(source, tag, el.end);
+        const inner =
+          closeIdx >= 0 ? source.slice(el.end, closeIdx) : source.slice(el.end);
+        notes.push(...scanTemplates(inner));
+      }
     }
   }
 
   // --- p-dropdown / p-select / p-multiSelect (element) ---
-  for (const tag of ['p-dropdown', 'p-select', 'p-multiSelect']) {
-    for (const el of findElements(source, tag)) {
-      const res = transformOpening(dropdownAdapter, el);
-      let opening = res.opening;
-      if (tag === 'p-multiSelect') {
-        opening = opening.replace(
-          '<nw-dropdown',
-          '<nw-dropdown [multiple]="true"',
-        );
+  for (const { tag: canonicalTag, multiple } of [
+    { tag: 'p-dropdown', multiple: false },
+    { tag: 'p-select', multiple: false },
+    { tag: 'p-multiSelect', multiple: true },
+  ]) {
+    for (const tag of primengTagAliases(canonicalTag)) {
+      for (const el of findElements(source, tag)) {
+        const res = transformOpening(dropdownAdapter, el);
+        let opening = res.opening;
+        if (multiple) {
+          opening = opening.replace(
+            '<nw-dropdown',
+            '<nw-dropdown [multiple]="true"',
+          );
+        }
+        edits.push({ start: el.start, end: el.end, replacement: opening });
+        notes.push(...res.notes);
+        imports.add(dropdownAdapter.importName);
       }
-      edits.push({ start: el.start, end: el.end, replacement: opening });
-      notes.push(...res.notes);
-      imports.add(dropdownAdapter.importName);
     }
   }
 
   // --- p-dialog / p-sidebar (element) ---
-  for (const tag of ['p-dialog', 'p-sidebar']) {
-    for (const el of findElements(source, tag)) {
-      const { opening, notes: n } = transformOpening(dialogAdapter, el);
-      edits.push({ start: el.start, end: el.end, replacement: opening });
-      notes.push(...n);
-      imports.add(dialogAdapter.importName);
+  for (const canonicalTag of ['p-dialog', 'p-sidebar']) {
+    for (const tag of primengTagAliases(canonicalTag)) {
+      for (const el of findElements(source, tag)) {
+        const { opening, notes: n } = transformOpening(dialogAdapter, el);
+        edits.push({ start: el.start, end: el.end, replacement: opening });
+        notes.push(...n);
+        imports.add(dialogAdapter.importName);
+      }
     }
   }
 
@@ -219,33 +230,39 @@ export function migrate(source: string): MigrationResult {
     treeSelectAdapter,
   ];
   for (const adapter of simpleAdapters) {
-    for (const el of findElements(source, adapter.sourceTag)) {
-      const { opening, notes: n } = transformOpening(adapter, el);
-      edits.push({ start: el.start, end: el.end, replacement: opening });
-      notes.push(...n);
-      imports.add(adapter.importName);
+    for (const tag of primengTagAliases(adapter.sourceTag)) {
+      for (const el of findElements(source, tag)) {
+        const { opening, notes: n } = transformOpening(adapter, el);
+        edits.push({ start: el.start, end: el.end, replacement: opening });
+        notes.push(...n);
+        imports.add(adapter.importName);
+      }
     }
   }
 
   // --- p-toast (element) ---
-  for (const el of findElements(source, 'p-toast')) {
-    const { opening, notes: n } = transformOpening(toastAdapter, el);
-    edits.push({ start: el.start, end: el.end, replacement: opening });
-    notes.push(...n);
-    notes.push({
-      bucket: 'manual',
-      message:
-        'Replace PrimeNG MessageService.add(...) calls with NwToastService.show({ severity, summary, detail })',
-    });
-    imports.add(toastAdapter.importName);
+  for (const tag of primengTagAliases('p-toast')) {
+    for (const el of findElements(source, tag)) {
+      const { opening, notes: n } = transformOpening(toastAdapter, el);
+      edits.push({ start: el.start, end: el.end, replacement: opening });
+      notes.push(...n);
+      notes.push({
+        bucket: 'manual',
+        message:
+          'Replace PrimeNG MessageService.add(...) calls with NwToastService.show({ severity, summary, detail })',
+      });
+      imports.add(toastAdapter.importName);
+    }
   }
 
   // --- p-button (element) ---
-  for (const el of findElements(source, 'p-button')) {
-    const { opening, notes: n } = transformOpening(buttonAdapter, el);
-    edits.push({ start: el.start, end: el.end, replacement: opening });
-    notes.push(...n);
-    imports.add(buttonAdapter.importName);
+  for (const tag of primengTagAliases('p-button')) {
+    for (const el of findElements(source, tag)) {
+      const { opening, notes: n } = transformOpening(buttonAdapter, el);
+      edits.push({ start: el.start, end: el.end, replacement: opening });
+      notes.push(...n);
+      imports.add(buttonAdapter.importName);
+    }
   }
 
   // --- button[pButton] (attribute directive) ---
@@ -269,15 +286,17 @@ export function migrate(source: string): MigrationResult {
   }
 
   // --- p-inputNumber / p-autoComplete (elements) ---
-  for (const { adapter, tag } of [
+  for (const { adapter, tag: canonicalTag } of [
     { adapter: inputNumberAdapter, tag: 'p-inputNumber' },
     { adapter: autocompleteAdapter, tag: 'p-autoComplete' },
   ]) {
-    for (const el of findElements(source, tag)) {
-      const { opening, notes: n } = transformOpening(adapter, el);
-      edits.push({ start: el.start, end: el.end, replacement: opening });
-      notes.push(...n);
-      imports.add(adapter.importName);
+    for (const tag of primengTagAliases(canonicalTag)) {
+      for (const el of findElements(source, tag)) {
+        const { opening, notes: n } = transformOpening(adapter, el);
+        edits.push({ start: el.start, end: el.end, replacement: opening });
+        notes.push(...n);
+        imports.add(adapter.importName);
+      }
     }
   }
 
@@ -320,84 +339,57 @@ export function migrate(source: string): MigrationResult {
     }
   }
 
+  // Closing tags are matched literally (not via findElements), so every
+  // casing alias of every source tag needs its own replacement — otherwise
+  // e.g. `<p-radiobutton>` would open as `<nw-radio>` but close as the
+  // untouched `</p-radiobutton>`, producing invalid mismatched output.
+  const CLOSING_TAG_MAP: [string, string][] = [
+    ['p-table', 'nw-data-table'],
+    ['p-inputNumber', 'nw-input-number'],
+    ['p-autoComplete', 'nw-autocomplete'],
+    ['p-button', 'nw-button'],
+    ['p-dropdown', 'nw-dropdown'],
+    ['p-select', 'nw-dropdown'],
+    ['p-multiSelect', 'nw-dropdown'],
+    ['p-dialog', 'nw-dialog'],
+    ['p-sidebar', 'nw-dialog'],
+    ['p-toast', 'nw-toast'],
+    ['p-tabView', 'nw-tabs'],
+    ['p-tabPanel', 'nw-tab'],
+    ['p-checkbox', 'nw-checkbox'],
+    ['p-radioButton', 'nw-radio'],
+    ['p-progressSpinner', 'nw-spinner'],
+    ['p-skeleton', 'nw-skeleton'],
+    ['p-divider', 'nw-divider'],
+    ['p-avatar', 'nw-avatar'],
+    ['p-avatarGroup', 'nw-avatar-group'],
+    ['p-tag', 'nw-tag'],
+    ['p-chip', 'nw-chip'],
+    ['p-fieldset', 'nw-fieldset'],
+    ['p-panel', 'nw-panel'],
+    ['p-card', 'nw-card'],
+    ['p-accordion', 'nw-accordion'],
+    ['p-accordionTab', 'nw-accordion-tab'],
+    ['p-steps', 'nw-steps'],
+    ['p-slider', 'nw-slider'],
+    ['p-rating', 'nw-rating'],
+    ['p-fileUpload', 'nw-file-upload'],
+    ['p-listbox', 'nw-listbox'],
+    ['p-splitButton', 'nw-split-button'],
+    ['p-overlayPanel', 'nw-overlay-panel'],
+    ['p-cascadeSelect', 'nw-cascade-select'],
+    ['p-splitter', 'nw-splitter'],
+    ['p-splitterPanel', 'nw-splitter-panel'],
+    ['p-tree', 'nw-tree'],
+    ['p-treeSelect', 'nw-tree-select'],
+  ];
+
   let code = applyEdits(source, edits);
-  code = code
-    .split('</p-table>')
-    .join('</nw-data-table>')
-    .split('</p-inputNumber>')
-    .join('</nw-input-number>')
-    .split('</p-autoComplete>')
-    .join('</nw-autocomplete>')
-    .split('</p-button>')
-    .join('</nw-button>')
-    .split('</p-dropdown>')
-    .join('</nw-dropdown>')
-    .split('</p-select>')
-    .join('</nw-dropdown>')
-    .split('</p-multiSelect>')
-    .join('</nw-dropdown>')
-    .split('</p-dialog>')
-    .join('</nw-dialog>')
-    .split('</p-sidebar>')
-    .join('</nw-dialog>')
-    .split('</p-toast>')
-    .join('</nw-toast>')
-    .split('</p-tabView>')
-    .join('</nw-tabs>')
-    .split('</p-tabPanel>')
-    .join('</nw-tab>')
-    .split('</p-checkbox>')
-    .join('</nw-checkbox>')
-    .split('</p-radioButton>')
-    .join('</nw-radio>')
-    .split('</p-progressSpinner>')
-    .join('</nw-spinner>')
-    .split('</p-skeleton>')
-    .join('</nw-skeleton>')
-    .split('</p-divider>')
-    .join('</nw-divider>')
-    .split('</p-avatar>')
-    .join('</nw-avatar>')
-    .split('</p-avatarGroup>')
-    .join('</nw-avatar-group>')
-    .split('</p-tag>')
-    .join('</nw-tag>')
-    .split('</p-chip>')
-    .join('</nw-chip>')
-    .split('</p-fieldset>')
-    .join('</nw-fieldset>')
-    .split('</p-panel>')
-    .join('</nw-panel>')
-    .split('</p-card>')
-    .join('</nw-card>')
-    .split('</p-accordion>')
-    .join('</nw-accordion>')
-    .split('</p-accordionTab>')
-    .join('</nw-accordion-tab>')
-    .split('</p-steps>')
-    .join('</nw-steps>')
-    .split('</p-slider>')
-    .join('</nw-slider>')
-    .split('</p-rating>')
-    .join('</nw-rating>')
-    .split('</p-fileUpload>')
-    .join('</nw-file-upload>')
-    .split('</p-listbox>')
-    .join('</nw-listbox>')
-    .split('</p-splitButton>')
-    .join('</nw-split-button>')
-    .split('</p-overlayPanel>')
-    .join('</nw-overlay-panel>')
-    .split('</p-cascadeSelect>')
-    .join('</nw-cascade-select>')
-    .split('</p-splitter>')
-    .join('</nw-splitter>')
-    .split('</p-splitterPanel>')
-    .join('</nw-splitter-panel>')
-    .split('</p-tree>')
-    .join('</nw-tree>')
-    .split('</p-treeSelect>')
-    .join('</nw-tree-select>');
+  for (const [sourceTag, targetTag] of CLOSING_TAG_MAP) {
+    for (const alias of primengTagAliases(sourceTag)) {
+      code = code.split(`</${alias}>`).join(`</${targetTag}>`);
+    }
+  }
 
   const report: MigrationReport = { mapped: [], manual: [], unsupported: [] };
   for (const note of notes) {
