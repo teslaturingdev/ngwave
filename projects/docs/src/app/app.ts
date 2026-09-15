@@ -55,5 +55,6 @@ export class App {
     { label: 'Data View', path: '/components/data-view' },
     { label: 'Pick List', path: '/components/pick-list' },
     { label: 'Order List', path: '/components/order-list' },
+    { label: 'Date Picker', path: '/components/date-picker' },
   ];
 }

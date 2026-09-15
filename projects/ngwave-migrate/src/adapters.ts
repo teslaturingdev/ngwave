@@ -1585,6 +1585,45 @@ export const orderListAdapter: Adapter = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// DatePicker: p-datePicker / p-calendar → nw-date-picker (p-calendar is the
+// pre-v19 name; both share the same props).
+// ---------------------------------------------------------------------------
+
+export const datePickerAdapter: Adapter = {
+  sourceTag: 'p-datePicker',
+  targetTag: 'nw-date-picker',
+  importName: 'NwDatePickerComponent',
+  mapAttr(attr) {
+    if (attr.name === 'selectionMode' && attr.value && attr.value !== 'single') {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-date-picker only supports single-date selection; multiple/range aren't supported`,
+      };
+    }
+    if (
+      attr.name === 'showTime' ||
+      attr.name === 'timeOnly' ||
+      attr.name === 'hourFormat' ||
+      attr.name === 'view' ||
+      attr.name === 'numberOfMonths' ||
+      attr.name === 'yearRange'
+    ) {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-date-picker shows a single day-grid month view; time selection, month/year views, and multi-month layouts aren't supported`,
+      };
+    }
+    if (attr.name === 'showButtonBar') {
+      return {
+        bucket: 'manual',
+        message: `${attr.raw} — nw-date-picker's Today button is on by default; add [showClear]="true" for a Clear button`,
+      };
+    }
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const passwordAdapter: Adapter = {
   sourceTag: 'p-password',
   targetTag: 'nw-password',
@@ -1762,6 +1801,8 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   dataViewAdapter.sourceTag,
   pickListAdapter.sourceTag,
   orderListAdapter.sourceTag,
+  datePickerAdapter.sourceTag,
+  'p-calendar',
   // Tabs v19 compositional API (p-tabpanel is already covered via the
   // legacy tabAdapter's casing-alias expansion of p-tabPanel).
   'p-tabs',

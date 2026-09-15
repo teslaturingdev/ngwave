@@ -63,6 +63,7 @@ import {
   dataViewAdapter,
   pickListAdapter,
   orderListAdapter,
+  datePickerAdapter,
   toastAdapter,
   treeAdapter,
   treeSelectAdapter,
@@ -426,6 +427,19 @@ export function migrate(source: string): MigrationResult {
             edits.push({ start: el.end, end: closeIdx, replacement: rewritten });
           }
         }
+      }
+    }
+  }
+
+  // --- p-datePicker / p-calendar (element) --- p-calendar is the pre-v19
+  // name; same props, so it reuses the same adapter and mapping.
+  for (const canonicalTag of ['p-datePicker', 'p-calendar']) {
+    for (const tag of primengTagAliases(canonicalTag)) {
+      for (const el of findElements(source, tag)) {
+        const { opening, notes: n } = transformOpening(datePickerAdapter, el);
+        edits.push({ start: el.start, end: el.end, replacement: opening });
+        notes.push(...n);
+        imports.add(datePickerAdapter.importName);
       }
     }
   }
@@ -862,6 +876,8 @@ export function migrate(source: string): MigrationResult {
     ['p-dataView', 'nw-data-view'],
     ['p-pickList', 'nw-pick-list'],
     ['p-orderList', 'nw-order-list'],
+    ['p-datePicker', 'nw-date-picker'],
+    ['p-calendar', 'nw-date-picker'],
     ['p-chart', 'nw-chart'],
     ['p-inputgroup', 'nw-input-group'],
     ['p-inputgroup-addon', 'nw-input-group-addon'],

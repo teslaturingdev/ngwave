@@ -54,6 +54,7 @@ import { PasswordDocPageComponent } from './pages/password.page';
 import { DataViewDocPageComponent } from './pages/data-view.page';
 import { PickListDocPageComponent } from './pages/pick-list.page';
 import { OrderListDocPageComponent } from './pages/order-list.page';
+import { DatePickerDocPageComponent } from './pages/date-picker.page';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -146,5 +147,6 @@ export const routes: Routes = [
   { path: 'components/data-view', component: DataViewDocPageComponent },
   { path: 'components/pick-list', component: PickListDocPageComponent },
   { path: 'components/order-list', component: OrderListDocPageComponent },
+  { path: 'components/date-picker', component: DatePickerDocPageComponent },
   { path: '**', redirectTo: '' },
 ];
