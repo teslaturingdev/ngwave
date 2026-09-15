@@ -41,6 +41,7 @@ import {
   tabsAdapter,
   tagAdapter,
   textareaAdapter,
+  timelineAdapter,
   toastAdapter,
   treeAdapter,
   treeSelectAdapter,
@@ -271,6 +272,28 @@ export function migrate(source: string): MigrationResult {
         edits.push({ start: el.start, end: el.end, replacement: opening });
         notes.push(...n);
         imports.add(dialogAdapter.importName);
+      }
+    }
+  }
+
+  // --- p-timeline (element) ---
+  for (const tag of primengTagAliases('p-timeline')) {
+    for (const el of findElements(source, tag)) {
+      const { opening, notes: n } = transformOpening(timelineAdapter, el);
+      edits.push({ start: el.start, end: el.end, replacement: opening });
+      notes.push(...n);
+      imports.add(timelineAdapter.importName);
+
+      if (!el.selfClosing) {
+        const closeIdx = findMatchingClose(source, tag, el.end);
+        const inner = closeIdx >= 0 ? source.slice(el.end, closeIdx) : source.slice(el.end);
+        if (/pTemplate\s*=\s*["'](content|opposite|marker)["']/.test(inner)) {
+          notes.push({
+            bucket: 'manual',
+            message:
+              'nw-timeline reads content/date/icon/color directly from each item in [value] rather than <ng-template pTemplate="content|opposite|marker">; move that markup into the data array',
+          });
+        }
       }
     }
   }
@@ -603,6 +626,7 @@ export function migrate(source: string): MigrationResult {
     ['p-badge', 'nw-badge'],
     ['p-overlaybadge', 'nw-overlay-badge'],
     ['p-message', 'nw-message'],
+    ['p-timeline', 'nw-timeline'],
   ];
 
   let code = applyEdits(source, edits);

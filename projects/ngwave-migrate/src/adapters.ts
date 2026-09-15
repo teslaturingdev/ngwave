@@ -1216,6 +1216,33 @@ export const messageAdapter: Adapter = {
 };
 
 // ---------------------------------------------------------------------------
+// Timeline: p-timeline → nw-timeline
+// ---------------------------------------------------------------------------
+
+const TIMELINE_RENAMES: Record<string, Rename> = {
+  value: { to: 'value' },
+  align: { to: 'align' },
+  styleClass: { to: 'class' },
+};
+
+export const timelineAdapter: Adapter = {
+  sourceTag: 'p-timeline',
+  targetTag: 'nw-timeline',
+  importName: 'NwTimelineComponent',
+  mapAttr(attr) {
+    if (attr.name === 'layout') {
+      return {
+        bucket: 'manual',
+        message: `${attr.raw} — nw-timeline only renders a vertical layout; horizontal isn't supported yet`,
+      };
+    }
+    const r = TIMELINE_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Full set of PrimeNG element tags this codemod has an adapter for. Attribute
 // directives (pButton, pInputText, pInputTextarea) apply to plain elements
 // (button/input/textarea) and aren't tag names, so they're listed separately.
@@ -1266,6 +1293,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   badgeAdapter.sourceTag,
   overlayBadgeAdapter.sourceTag,
   messageAdapter.sourceTag,
+  timelineAdapter.sourceTag,
   // Strip-only tags: no NgWave component target, handled by dedicated
   // string transforms in migrate.ts (removed, unwrapped, or renamed to a
   // plain element) rather than a full Adapter.

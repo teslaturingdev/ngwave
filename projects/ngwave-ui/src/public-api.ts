@@ -34,6 +34,7 @@ export * from './lib/splitter';
 export * from './lib/steps';
 export * from './lib/tabs';
 export * from './lib/tag';
+export * from './lib/timeline';
 export * from './lib/toast';
 export * from './lib/toggle';
 export * from './lib/tree';

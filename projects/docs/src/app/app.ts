@@ -48,5 +48,6 @@ export class App {
     { label: 'Splitter', path: '/components/splitter' },
     { label: 'Tree', path: '/components/tree' },
     { label: 'Tree Select', path: '/components/tree-select' },
+    { label: 'Timeline', path: '/components/timeline' },
   ];
 }
