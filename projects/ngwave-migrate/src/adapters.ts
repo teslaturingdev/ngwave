@@ -1386,6 +1386,89 @@ export const confirmDialogAdapter: Adapter = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// MenuBar / TieredMenu / ContextMenu / PanelMenu → nw-menubar / nw-tiered-menu /
+// nw-context-menu / nw-panel-menu. All share PrimeNG's standard [model] +
+// styleClass shape.
+// ---------------------------------------------------------------------------
+
+const NAV_MENU_RENAMES: Record<string, Rename> = {
+  model: { to: 'model' },
+  styleClass: { to: 'class' },
+};
+
+export const menubarAdapter: Adapter = {
+  sourceTag: 'p-menubar',
+  targetTag: 'nw-menubar',
+  importName: 'NwMenuBarComponent',
+  mapAttr(attr) {
+    const r = NAV_MENU_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+export const tieredMenuAdapter: Adapter = {
+  sourceTag: 'p-tieredMenu',
+  targetTag: 'nw-tiered-menu',
+  importName: 'NwTieredMenuComponent',
+  mapAttr(attr) {
+    if (attr.name === 'popup') return rename(attr, { to: 'popup' });
+    const r = NAV_MENU_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+export const contextMenuAdapter: Adapter = {
+  sourceTag: 'p-contextMenu',
+  targetTag: 'nw-context-menu',
+  importName: 'NwContextMenuComponent',
+  mapAttr(attr) {
+    if (attr.name === 'global') {
+      return {
+        bucket: 'manual',
+        message:
+          '<p-contextMenu [global]="true"> — nw-context-menu has no global-listener mode; wire (contextmenu)="menu.show($event)" on the specific target element yourself',
+      };
+    }
+    const r = NAV_MENU_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+export const panelMenuAdapter: Adapter = {
+  sourceTag: 'p-panelMenu',
+  targetTag: 'nw-panel-menu',
+  importName: 'NwPanelMenuComponent',
+  mapAttr(attr) {
+    if (attr.name === 'multiple') {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-panel-menu always allows multiple expanded branches at once`,
+      };
+    }
+    const r = NAV_MENU_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// ConfirmPopup: p-confirmPopup → nw-confirm-popup
+// ---------------------------------------------------------------------------
+
+export const confirmPopupAdapter: Adapter = {
+  sourceTag: 'p-confirmPopup',
+  targetTag: 'nw-confirm-popup',
+  importName: 'NwConfirmPopupComponent',
+  mapAttr(attr) {
+    if (attr.name === 'styleClass') return rename(attr, { to: 'class' });
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const timelineAdapter: Adapter = {
   sourceTag: 'p-timeline',
   targetTag: 'nw-timeline',
@@ -1493,6 +1576,11 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   progressBarAdapter.sourceTag,
   toggleButtonAdapter.sourceTag,
   confirmDialogAdapter.sourceTag,
+  confirmPopupAdapter.sourceTag,
+  contextMenuAdapter.sourceTag,
+  menubarAdapter.sourceTag,
+  panelMenuAdapter.sourceTag,
+  tieredMenuAdapter.sourceTag,
   megaMenuAdapter.sourceTag,
   menuAdapter.sourceTag,
   splitButtonAdapter.sourceTag,

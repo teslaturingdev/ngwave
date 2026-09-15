@@ -11,11 +11,14 @@ export interface NwConfirmation {
   rejectVariant?: NwButtonVariant;
   accept?: () => void;
   reject?: () => void;
+  /** Element to anchor near — used by nw-confirm-popup, ignored by nw-confirm-dialog. */
+  target?: EventTarget | null;
 }
 
 /**
- * Drives `<nw-confirm-dialog>`. Call `confirm(...)` from anywhere; place a
- * single `<nw-confirm-dialog />` at the app root to render it.
+ * Drives `<nw-confirm-dialog>` (modal) or `<nw-confirm-popup>` (anchored,
+ * non-modal) — use one or the other, both read the same pending request.
+ * Call `confirm(...)` from anywhere; place a single renderer at the app root.
  */
 @Injectable({ providedIn: 'root' })
 export class NwConfirmationService {
