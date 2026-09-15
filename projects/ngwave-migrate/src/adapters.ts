@@ -1367,6 +1367,25 @@ export const megaMenuAdapter: Adapter = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// ConfirmDialog: p-confirmDialog → nw-confirm-dialog
+// ---------------------------------------------------------------------------
+
+const CONFIRM_DIALOG_RENAMES: Record<string, Rename> = {
+  styleClass: { to: 'class' },
+};
+
+export const confirmDialogAdapter: Adapter = {
+  sourceTag: 'p-confirmDialog',
+  targetTag: 'nw-confirm-dialog',
+  importName: 'NwConfirmDialogComponent',
+  mapAttr(attr) {
+    const r = CONFIRM_DIALOG_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const timelineAdapter: Adapter = {
   sourceTag: 'p-timeline',
   targetTag: 'nw-timeline',
@@ -1473,6 +1492,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   selectButtonAdapter.sourceTag,
   progressBarAdapter.sourceTag,
   toggleButtonAdapter.sourceTag,
+  confirmDialogAdapter.sourceTag,
   megaMenuAdapter.sourceTag,
   menuAdapter.sourceTag,
   splitButtonAdapter.sourceTag,
