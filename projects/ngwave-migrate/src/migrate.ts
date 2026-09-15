@@ -64,6 +64,11 @@ import {
   pickListAdapter,
   orderListAdapter,
   datePickerAdapter,
+  colorPickerAdapter,
+  knobAdapter,
+  carouselAdapter,
+  imageAdapter,
+  galleriaAdapter,
   toastAdapter,
   treeAdapter,
   treeSelectAdapter,
@@ -444,6 +449,52 @@ export function migrate(source: string): MigrationResult {
     }
   }
 
+  // --- p-carousel (element) — same per-item pTemplate="item" shape as
+  // p-pickList/p-orderList. ---
+  for (const tag of primengTagAliases('p-carousel')) {
+    for (const el of findElements(source, tag)) {
+      const { opening, notes: n } = transformOpening(carouselAdapter, el);
+      edits.push({ start: el.start, end: el.end, replacement: opening });
+      notes.push(...n);
+      imports.add(carouselAdapter.importName);
+
+      if (!el.selfClosing) {
+        const closeIdx = findMatchingClose(source, tag, el.end);
+        if (closeIdx >= 0) {
+          const inner = source.slice(el.end, closeIdx);
+          const rewritten = inner.replace(/pTemplate\s*=\s*(["'])item\1/g, 'nwCarouselItem');
+          if (rewritten !== inner) {
+            edits.push({ start: el.end, end: closeIdx, replacement: rewritten });
+          }
+        }
+      }
+    }
+  }
+
+  // --- p-galleria (element) — item/thumbnail pTemplates map onto
+  // nwGalleriaItem/nwGalleriaThumbnail directives. ---
+  for (const tag of primengTagAliases('p-galleria')) {
+    for (const el of findElements(source, tag)) {
+      const { opening, notes: n } = transformOpening(galleriaAdapter, el);
+      edits.push({ start: el.start, end: el.end, replacement: opening });
+      notes.push(...n);
+      imports.add(galleriaAdapter.importName);
+
+      if (!el.selfClosing) {
+        const closeIdx = findMatchingClose(source, tag, el.end);
+        if (closeIdx >= 0) {
+          const inner = source.slice(el.end, closeIdx);
+          const rewritten = inner
+            .replace(/pTemplate\s*=\s*(["'])item\1/g, 'nwGalleriaItem')
+            .replace(/pTemplate\s*=\s*(["'])thumbnail\1/g, 'nwGalleriaThumbnail');
+          if (rewritten !== inner) {
+            edits.push({ start: el.end, end: closeIdx, replacement: rewritten });
+          }
+        }
+      }
+    }
+  }
+
   // --- p-tabs / p-tablist / p-tab / p-tabpanels / p-tabpanel (PrimeNG v19
   // compositional Tabs API) → nw-tabs / nw-tab. Structurally distinct from
   // the legacy p-tabView/p-tabPanel API (separate header list + panel list
@@ -588,6 +639,9 @@ export function migrate(source: string): MigrationResult {
 
   // --- simple element adapters (opening transform + closing rename) ---
   const simpleAdapters: Adapter[] = [
+    colorPickerAdapter,
+    knobAdapter,
+    imageAdapter,
     tabsAdapter,
     tabAdapter,
     checkboxAdapter,
@@ -878,6 +932,11 @@ export function migrate(source: string): MigrationResult {
     ['p-orderList', 'nw-order-list'],
     ['p-datePicker', 'nw-date-picker'],
     ['p-calendar', 'nw-date-picker'],
+    ['p-colorPicker', 'nw-color-picker'],
+    ['p-knob', 'nw-knob'],
+    ['p-image', 'nw-image'],
+    ['p-carousel', 'nw-carousel'],
+    ['p-galleria', 'nw-galleria'],
     ['p-chart', 'nw-chart'],
     ['p-inputgroup', 'nw-input-group'],
     ['p-inputgroup-addon', 'nw-input-group-addon'],

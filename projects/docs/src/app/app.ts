@@ -56,5 +56,10 @@ export class App {
     { label: 'Pick List', path: '/components/pick-list' },
     { label: 'Order List', path: '/components/order-list' },
     { label: 'Date Picker', path: '/components/date-picker' },
+    { label: 'Color Picker', path: '/components/color-picker' },
+    { label: 'Knob', path: '/components/knob' },
+    { label: 'Carousel', path: '/components/carousel' },
+    { label: 'Image', path: '/components/image' },
+    { label: 'Galleria', path: '/components/galleria' },
   ];
 }

@@ -55,6 +55,11 @@ import { DataViewDocPageComponent } from './pages/data-view.page';
 import { PickListDocPageComponent } from './pages/pick-list.page';
 import { OrderListDocPageComponent } from './pages/order-list.page';
 import { DatePickerDocPageComponent } from './pages/date-picker.page';
+import { ColorPickerDocPageComponent } from './pages/color-picker.page';
+import { KnobDocPageComponent } from './pages/knob.page';
+import { CarouselDocPageComponent } from './pages/carousel.page';
+import { ImageDocPageComponent } from './pages/image.page';
+import { GalleriaDocPageComponent } from './pages/galleria.page';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -148,5 +153,10 @@ export const routes: Routes = [
   { path: 'components/pick-list', component: PickListDocPageComponent },
   { path: 'components/order-list', component: OrderListDocPageComponent },
   { path: 'components/date-picker', component: DatePickerDocPageComponent },
+  { path: 'components/color-picker', component: ColorPickerDocPageComponent },
+  { path: 'components/knob', component: KnobDocPageComponent },
+  { path: 'components/carousel', component: CarouselDocPageComponent },
+  { path: 'components/image', component: ImageDocPageComponent },
+  { path: 'components/galleria', component: GalleriaDocPageComponent },
   { path: '**', redirectTo: '' },
 ];

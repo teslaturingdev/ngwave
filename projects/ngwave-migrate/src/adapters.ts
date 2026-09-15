@@ -1624,6 +1624,119 @@ export const datePickerAdapter: Adapter = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// ColorPicker: p-colorPicker → nw-color-picker
+// ---------------------------------------------------------------------------
+
+export const colorPickerAdapter: Adapter = {
+  sourceTag: 'p-colorPicker',
+  targetTag: 'nw-color-picker',
+  importName: 'NwColorPickerComponent',
+  mapAttr(attr) {
+    if (attr.name === 'format' && attr.value && attr.value !== 'hex') {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-color-picker only works in hex; rgb/hsb formats aren't supported`,
+      };
+    }
+    if (attr.name === 'inline') {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-color-picker is always an inline swatch (the native color input has no separate popup mode to toggle)`,
+      };
+    }
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Knob: p-knob → nw-knob
+// ---------------------------------------------------------------------------
+
+const KNOB_RENAMES: Record<string, string> = {
+  valueColor: 'class',
+  rangeColor: 'class',
+  textColor: 'class',
+};
+
+export const knobAdapter: Adapter = {
+  sourceTag: 'p-knob',
+  targetTag: 'nw-knob',
+  importName: 'NwKnobComponent',
+  mapAttr(attr) {
+    if (KNOB_RENAMES[attr.name]) {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-knob is themed via CSS tokens (stroke-nw-500 / stroke-surface-200), not per-instance color inputs`,
+      };
+    }
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Carousel: p-carousel → nw-carousel
+// ---------------------------------------------------------------------------
+
+export const carouselAdapter: Adapter = {
+  sourceTag: 'p-carousel',
+  targetTag: 'nw-carousel',
+  importName: 'NwCarouselComponent',
+  mapAttr(attr) {
+    if (attr.name === 'autoplayInterval' || attr.name === 'responsiveOptions' || attr.name === 'orientation') {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-carousel has no autoplay, responsive breakpoints, or vertical orientation`,
+      };
+    }
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Image: p-image → nw-image
+// ---------------------------------------------------------------------------
+
+export const imageAdapter: Adapter = {
+  sourceTag: 'p-image',
+  targetTag: 'nw-image',
+  importName: 'NwImageComponent',
+  mapAttr(attr) {
+    if (attr.name === 'imageStyleClass') return rename(attr, { to: 'class' });
+    if (attr.name === 'previewImageSrc' || attr.name === 'zoomSrc') {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-image's preview overlay always reuses [src]; a separate full-resolution preview source isn't supported`,
+      };
+    }
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Galleria: p-galleria → nw-galleria
+// ---------------------------------------------------------------------------
+
+export const galleriaAdapter: Adapter = {
+  sourceTag: 'p-galleria',
+  targetTag: 'nw-galleria',
+  importName: 'NwGalleriaComponent',
+  mapAttr(attr) {
+    if (
+      attr.name === 'fullScreen' ||
+      attr.name === 'autoPlay' ||
+      attr.name === 'numVisible' ||
+      attr.name === 'thumbnailsPosition'
+    ) {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-galleria is a single main view with a fixed bottom thumbnail strip; fullscreen mode, autoplay, and multi-thumbnail/positioning options aren't supported`,
+      };
+    }
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const passwordAdapter: Adapter = {
   sourceTag: 'p-password',
   targetTag: 'nw-password',
@@ -1803,6 +1916,11 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   orderListAdapter.sourceTag,
   datePickerAdapter.sourceTag,
   'p-calendar',
+  colorPickerAdapter.sourceTag,
+  knobAdapter.sourceTag,
+  carouselAdapter.sourceTag,
+  imageAdapter.sourceTag,
+  galleriaAdapter.sourceTag,
   // Tabs v19 compositional API (p-tabpanel is already covered via the
   // legacy tabAdapter's casing-alias expansion of p-tabPanel).
   'p-tabs',
