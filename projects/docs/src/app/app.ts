@@ -50,5 +50,6 @@ export class App {
     { label: 'Tree', path: '/components/tree' },
     { label: 'Tree Select', path: '/components/tree-select' },
     { label: 'Timeline', path: '/components/timeline' },
+    { label: 'Float Label', path: '/components/float-label' },
   ];
 }

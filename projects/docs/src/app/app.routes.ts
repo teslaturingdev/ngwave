@@ -49,6 +49,7 @@ import { SplitterDocPageComponent } from './pages/splitter.page';
 import { TreeDocPageComponent } from './pages/tree.page';
 import { TreeSelectDocPageComponent } from './pages/tree-select.page';
 import { TimelineDocPageComponent } from './pages/timeline.page';
+import { FloatLabelDocPageComponent } from './pages/float-label.page';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -136,5 +137,6 @@ export const routes: Routes = [
   { path: 'components/tree', component: TreeDocPageComponent },
   { path: 'components/tree-select', component: TreeSelectDocPageComponent },
   { path: 'components/timeline', component: TimelineDocPageComponent },
+  { path: 'components/float-label', component: FloatLabelDocPageComponent },
   { path: '**', redirectTo: '' },
 ];

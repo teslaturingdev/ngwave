@@ -1492,6 +1492,25 @@ export const treeTableAdapter: Adapter = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// FloatLabel: p-floatLabel → nw-float-label
+// ---------------------------------------------------------------------------
+
+export const floatLabelAdapter: Adapter = {
+  sourceTag: 'p-floatLabel',
+  targetTag: 'nw-float-label',
+  importName: 'NwFloatLabelComponent',
+  mapAttr(attr) {
+    if (attr.name === 'variant') {
+      return {
+        bucket: 'manual',
+        message: `${attr.raw} — nw-float-label has a single visual style; the over/in/on variant distinction isn't supported`,
+      };
+    }
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const timelineAdapter: Adapter = {
   sourceTag: 'p-timeline',
   targetTag: 'nw-timeline',
@@ -1640,6 +1659,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   'p-treeTableCheckbox',
   'p-buttongroup',
   treeTableAdapter.sourceTag,
+  floatLabelAdapter.sourceTag,
   // Tabs v19 compositional API (p-tabpanel is already covered via the
   // legacy tabAdapter's casing-alias expansion of p-tabPanel).
   'p-tabs',
