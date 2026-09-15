@@ -31,6 +31,7 @@ import { SelectButtonDocPageComponent } from './pages/select-button.page';
 import { ProgressBarDocPageComponent } from './pages/progress-bar.page';
 import { ToolbarDocPageComponent } from './pages/toolbar.page';
 import { TooltipDocPageComponent } from './pages/tooltip.page';
+import { ToggleButtonDocPageComponent } from './pages/toggle-button.page';
 import { FileUploadDocPageComponent } from './pages/file-upload.page';
 import { ListboxDocPageComponent } from './pages/listbox.page';
 import { SplitButtonDocPageComponent } from './pages/split-button.page';
@@ -110,6 +111,7 @@ export const routes: Routes = [
   { path: 'components/progress-bar', component: ProgressBarDocPageComponent },
   { path: 'components/toolbar', component: ToolbarDocPageComponent },
   { path: 'components/tooltip', component: TooltipDocPageComponent },
+  { path: 'components/toggle-button', component: ToggleButtonDocPageComponent },
   { path: 'components/file-upload', component: FileUploadDocPageComponent },
   { path: 'components/listbox', component: ListboxDocPageComponent },
   { path: 'components/split-button', component: SplitButtonDocPageComponent },

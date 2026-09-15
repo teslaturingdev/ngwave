@@ -1319,6 +1319,28 @@ export const toolbarAdapter: Adapter = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// ToggleButton: p-toggleButton → nw-toggle-button
+// ---------------------------------------------------------------------------
+
+const TOGGLE_BUTTON_RENAMES: Record<string, Rename> = {
+  onLabel: { to: 'onLabel' },
+  offLabel: { to: 'offLabel' },
+  disabled: { to: 'disabled' },
+  styleClass: { to: 'class' },
+};
+
+export const toggleButtonAdapter: Adapter = {
+  sourceTag: 'p-toggleButton',
+  targetTag: 'nw-toggle-button',
+  importName: 'NwToggleButtonComponent',
+  mapAttr(attr) {
+    const r = TOGGLE_BUTTON_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const timelineAdapter: Adapter = {
   sourceTag: 'p-timeline',
   targetTag: 'nw-timeline',
@@ -1424,6 +1446,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   listboxAdapter.sourceTag,
   selectButtonAdapter.sourceTag,
   progressBarAdapter.sourceTag,
+  toggleButtonAdapter.sourceTag,
   menuAdapter.sourceTag,
   splitButtonAdapter.sourceTag,
   overlayPanelAdapter.sourceTag,
