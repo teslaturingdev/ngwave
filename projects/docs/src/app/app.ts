@@ -24,6 +24,7 @@ export class App {
     { label: 'Form Inputs', path: '/components/input' },
     { label: 'Dialog', path: '/components/dialog' },
     { label: 'Toast', path: '/components/toast' },
+    { label: 'Message', path: '/components/message' },
     { label: 'Tabs', path: '/components/tabs' },
     { label: 'Checkbox & Radio', path: '/components/checkbox' },
     { label: 'Spinner & Skeleton', path: '/components/spinner' },

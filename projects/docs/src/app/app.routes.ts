@@ -9,6 +9,7 @@ import { CheckboxDocPageComponent } from './pages/checkbox.page';
 import { SpinnerDocPageComponent } from './pages/spinner.page';
 import { TabsDocPageComponent } from './pages/tabs.page';
 import { ToastPageComponent } from './pages/toast.page';
+import { MessageDocPageComponent } from './pages/message.page';
 import { InputDocPageComponent } from './pages/input.page';
 import { AutocompleteDocPageComponent } from './pages/autocomplete.page';
 import { ChangelogPageComponent } from './pages/changelog.page';
@@ -79,6 +80,7 @@ export const routes: Routes = [
   { path: 'components/input', component: InputDocPageComponent },
   { path: 'components/dialog', component: DialogPageComponent },
   { path: 'components/toast', component: ToastPageComponent },
+  { path: 'components/message', component: MessageDocPageComponent },
   { path: 'components/tabs', component: TabsDocPageComponent },
   { path: 'components/checkbox', component: CheckboxDocPageComponent },
   { path: 'components/spinner', component: SpinnerDocPageComponent },

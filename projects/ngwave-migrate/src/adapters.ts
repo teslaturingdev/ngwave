@@ -1184,6 +1184,38 @@ export const overlayBadgeAdapter: Adapter = {
 };
 
 // ---------------------------------------------------------------------------
+// Message: p-message → nw-message
+// ---------------------------------------------------------------------------
+
+const MESSAGE_RENAMES: Record<string, Rename> = {
+  severity: { to: 'severity' },
+  text: { to: 'text' },
+  closable: { to: 'closable' },
+  life: { to: 'life' },
+  styleClass: { to: 'class' },
+};
+
+export const messageAdapter: Adapter = {
+  sourceTag: 'p-message',
+  targetTag: 'nw-message',
+  importName: 'NwMessageComponent',
+  mapAttr(attr) {
+    if (attr.name === 'icon') {
+      return {
+        bucket: 'manual',
+        message: `${attr.raw} — nw-message picks its icon from severity automatically; a custom icon isn't supported yet`,
+      };
+    }
+    if (attr.name === 'escape') {
+      return { bucket: 'mapped', message: `${attr.raw} — nw-message always renders text as plain text (dropped)` };
+    }
+    const r = MESSAGE_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Full set of PrimeNG element tags this codemod has an adapter for. Attribute
 // directives (pButton, pInputText, pInputTextarea) apply to plain elements
 // (button/input/textarea) and aren't tag names, so they're listed separately.
@@ -1233,6 +1265,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   accordionPanelAdapter.sourceTag,
   badgeAdapter.sourceTag,
   overlayBadgeAdapter.sourceTag,
+  messageAdapter.sourceTag,
   // Strip-only tags: no NgWave component target, handled by dedicated
   // string transforms in migrate.ts (removed, unwrapped, or renamed to a
   // plain element) rather than a full Adapter.

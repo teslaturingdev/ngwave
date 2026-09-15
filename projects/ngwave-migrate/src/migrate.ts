@@ -22,6 +22,7 @@ import {
   inputNumberAdapter,
   inputTextAdapter,
   listboxAdapter,
+  messageAdapter,
   overlayBadgeAdapter,
   overlayPanelAdapter,
   panelAdapter,
@@ -384,6 +385,7 @@ export function migrate(source: string): MigrationResult {
     accordionPanelAdapter,
     badgeAdapter,
     overlayBadgeAdapter,
+    messageAdapter,
   ];
   for (const adapter of simpleAdapters) {
     for (const tag of primengTagAliases(adapter.sourceTag)) {
@@ -600,6 +602,7 @@ export function migrate(source: string): MigrationResult {
     ['p-accordion-panel', 'nw-accordion-tab'],
     ['p-badge', 'nw-badge'],
     ['p-overlaybadge', 'nw-overlay-badge'],
+    ['p-message', 'nw-message'],
   ];
 
   let code = applyEdits(source, edits);
