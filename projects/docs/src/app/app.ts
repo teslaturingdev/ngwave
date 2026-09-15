@@ -52,5 +52,6 @@ export class App {
     { label: 'Timeline', path: '/components/timeline' },
     { label: 'Float Label', path: '/components/float-label' },
     { label: 'Password', path: '/components/password' },
+    { label: 'Data View', path: '/components/data-view' },
   ];
 }

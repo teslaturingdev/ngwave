@@ -51,6 +51,7 @@ import { TreeSelectDocPageComponent } from './pages/tree-select.page';
 import { TimelineDocPageComponent } from './pages/timeline.page';
 import { FloatLabelDocPageComponent } from './pages/float-label.page';
 import { PasswordDocPageComponent } from './pages/password.page';
+import { DataViewDocPageComponent } from './pages/data-view.page';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -140,5 +141,6 @@ export const routes: Routes = [
   { path: 'components/timeline', component: TimelineDocPageComponent },
   { path: 'components/float-label', component: FloatLabelDocPageComponent },
   { path: 'components/password', component: PasswordDocPageComponent },
+  { path: 'components/data-view', component: DataViewDocPageComponent },
   { path: '**', redirectTo: '' },
 ];

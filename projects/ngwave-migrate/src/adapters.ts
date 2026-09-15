@@ -1519,6 +1519,25 @@ const PASSWORD_RENAMES: Record<string, string> = {
   styleClass: 'class',
 };
 
+// ---------------------------------------------------------------------------
+// DataView: p-dataView → nw-data-view
+// ---------------------------------------------------------------------------
+
+export const dataViewAdapter: Adapter = {
+  sourceTag: 'p-dataView',
+  targetTag: 'nw-data-view',
+  importName: 'NwDataViewComponent',
+  mapAttr(attr) {
+    if (attr.name === 'sortField' || attr.name === 'sortOrder') {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-data-view has no built-in sorting; sort [value] yourself before binding it`,
+      };
+    }
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const passwordAdapter: Adapter = {
   sourceTag: 'p-password',
   targetTag: 'nw-password',
@@ -1693,6 +1712,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   treeTableAdapter.sourceTag,
   floatLabelAdapter.sourceTag,
   passwordAdapter.sourceTag,
+  dataViewAdapter.sourceTag,
   // Tabs v19 compositional API (p-tabpanel is already covered via the
   // legacy tabAdapter's casing-alias expansion of p-tabPanel).
   'p-tabs',

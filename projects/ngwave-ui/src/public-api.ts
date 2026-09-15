@@ -17,6 +17,7 @@ export * from './lib/chip';
 export * from './lib/confirm-popup';
 export * from './lib/context-menu';
 export * from './lib/data-table';
+export * from './lib/data-view';
 export * from './lib/dialog';
 export * from './lib/divider';
 export * from './lib/dropdown';
