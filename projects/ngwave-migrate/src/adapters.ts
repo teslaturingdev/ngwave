@@ -1148,6 +1148,42 @@ export const accordionPanelAdapter: Adapter = {
 };
 
 // ---------------------------------------------------------------------------
+// Badge / OverlayBadge: p-badge → nw-badge, p-overlaybadge → nw-overlay-badge
+// (pBadge attribute directive is handled as a strip + manual note in
+// migrate.ts — wrapping an arbitrary host element structurally isn't a
+// per-attribute rename.)
+// ---------------------------------------------------------------------------
+
+const BADGE_RENAMES: Record<string, Rename> = {
+  value: { to: 'value' },
+  severity: { to: 'severity' },
+  size: { to: 'size' },
+  styleClass: { to: 'class' },
+};
+
+export const badgeAdapter: Adapter = {
+  sourceTag: 'p-badge',
+  targetTag: 'nw-badge',
+  importName: 'NwBadgeComponent',
+  mapAttr(attr) {
+    const r = BADGE_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+export const overlayBadgeAdapter: Adapter = {
+  sourceTag: 'p-overlaybadge',
+  targetTag: 'nw-overlay-badge',
+  importName: 'NwOverlayBadgeComponent',
+  mapAttr(attr) {
+    const r = BADGE_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Full set of PrimeNG element tags this codemod has an adapter for. Attribute
 // directives (pButton, pInputText, pInputTextarea) apply to plain elements
 // (button/input/textarea) and aren't tag names, so they're listed separately.
@@ -1195,6 +1231,8 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   breadcrumbAdapter.sourceTag,
   popoverAdapter.sourceTag,
   accordionPanelAdapter.sourceTag,
+  badgeAdapter.sourceTag,
+  overlayBadgeAdapter.sourceTag,
   // Strip-only tags: no NgWave component target, handled by dedicated
   // string transforms in migrate.ts (removed, unwrapped, or renamed to a
   // plain element) rather than a full Adapter.
@@ -1226,4 +1264,5 @@ export const SUPPORTED_PRIMENG_ATTR_DIRECTIVES: string[] = [
   'pInputText',
   'pInputTextarea',
   'pRipple',
+  'pBadge',
 ];

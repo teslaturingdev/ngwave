@@ -14,6 +14,7 @@ import { AutocompleteDocPageComponent } from './pages/autocomplete.page';
 import { ChangelogPageComponent } from './pages/changelog.page';
 import { DividerDocPageComponent } from './pages/divider.page';
 import { AvatarDocPageComponent } from './pages/avatar.page';
+import { BadgeDocPageComponent } from './pages/badge.page';
 import { TagDocPageComponent } from './pages/tag.page';
 import { ChipDocPageComponent } from './pages/chip.page';
 import { FieldsetDocPageComponent } from './pages/fieldset.page';
@@ -87,6 +88,7 @@ export const routes: Routes = [
   { path: 'components/tag', component: TagDocPageComponent },
   { path: 'components/chip', component: ChipDocPageComponent },
   { path: 'components/avatar', component: AvatarDocPageComponent },
+  { path: 'components/badge', component: BadgeDocPageComponent },
   { path: 'components/divider', component: DividerDocPageComponent },
   { path: 'components/accordion', component: AccordionDocPageComponent },
   { path: 'components/steps', component: StepsDocPageComponent },

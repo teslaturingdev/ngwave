@@ -33,6 +33,7 @@ export class App {
     { label: 'Tag', path: '/components/tag' },
     { label: 'Chip', path: '/components/chip' },
     { label: 'Avatar', path: '/components/avatar' },
+    { label: 'Badge', path: '/components/badge' },
     { label: 'Divider', path: '/components/divider' },
     { label: 'Accordion', path: '/components/accordion' },
     { label: 'Steps', path: '/components/steps' },

@@ -6,6 +6,7 @@ import {
   autocompleteAdapter,
   avatarAdapter,
   avatarGroupAdapter,
+  badgeAdapter,
   breadcrumbAdapter,
   buttonAdapter,
   cardAdapter,
@@ -21,6 +22,7 @@ import {
   inputNumberAdapter,
   inputTextAdapter,
   listboxAdapter,
+  overlayBadgeAdapter,
   overlayPanelAdapter,
   panelAdapter,
   popoverAdapter,
@@ -380,6 +382,8 @@ export function migrate(source: string): MigrationResult {
     breadcrumbAdapter,
     popoverAdapter,
     accordionPanelAdapter,
+    badgeAdapter,
+    overlayBadgeAdapter,
   ];
   for (const adapter of simpleAdapters) {
     for (const tag of primengTagAliases(adapter.sourceTag)) {
@@ -594,6 +598,8 @@ export function migrate(source: string): MigrationResult {
     ['p-breadcrumb', 'nw-breadcrumb'],
     ['p-popover', 'nw-overlay-panel'],
     ['p-accordion-panel', 'nw-accordion-tab'],
+    ['p-badge', 'nw-badge'],
+    ['p-overlaybadge', 'nw-overlay-badge'],
   ];
 
   let code = applyEdits(source, edits);
@@ -743,6 +749,26 @@ export function migrate(source: string): MigrationResult {
     );
     code = res.code;
     notes.push(...res.notes);
+  }
+
+  // --- pBadge: attribute directive that overlays a badge on its host element.
+  // Wrapping the host in <nw-overlay-badge> is a structural change (unlike a
+  // simple attribute rename), so this strips the directive and its own
+  // value/severity attrs and leaves a manual note instead of guessing.
+  {
+    const re = /\spBadge(?:="[^"]*"|='[^']*')?(?=[\s/>])/g;
+    let hadPBadge = false;
+    code = code.replace(re, () => {
+      hadPBadge = true;
+      return '';
+    });
+    if (hadPBadge) {
+      notes.push({
+        bucket: 'manual',
+        message:
+          'pBadge removed — wrap the element in <nw-overlay-badge value="..." severity="...">...</nw-overlay-badge> manually',
+      });
+    }
   }
 
   const report: MigrationReport = { mapped: [], manual: [], unsupported: [] };
