@@ -267,8 +267,10 @@ export function migrate(source: string): MigrationResult {
     }
   }
 
-  // --- p-dialog / p-sidebar (element) ---
-  for (const canonicalTag of ['p-dialog', 'p-sidebar']) {
+  // --- p-dialog / p-sidebar / p-drawer (element) --- p-drawer is PrimeNG
+  // v19's rename of p-sidebar; same props (position/visible/header/modal/
+  // dismissible/showCloseIcon), so it reuses the same adapter and mapping.
+  for (const canonicalTag of ['p-dialog', 'p-sidebar', 'p-drawer']) {
     for (const tag of primengTagAliases(canonicalTag)) {
       for (const el of findElements(source, tag)) {
         const { opening, notes: n } = transformOpening(dialogAdapter, el);
@@ -664,6 +666,7 @@ export function migrate(source: string): MigrationResult {
     ['p-multiSelect', 'nw-dropdown'],
     ['p-dialog', 'nw-dialog'],
     ['p-sidebar', 'nw-dialog'],
+    ['p-drawer', 'nw-dialog'],
     ['p-toast', 'nw-toast'],
     ['p-tabView', 'nw-tabs'],
     ['p-tabPanel', 'nw-tab'],

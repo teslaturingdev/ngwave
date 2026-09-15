@@ -61,4 +61,15 @@ describe('dialog adapter — attribute map', () => {
     expect(out.code).toContain('[closable]="true"');
     expect(out.code).toContain('</nw-dialog>');
   });
+
+  it('migrates p-drawer (PrimeNG v19 rename of p-sidebar) to nw-dialog', () => {
+    const out = migrate(
+      `<p-drawer [(visible)]="s" position="left" [dismissible]="true"></p-drawer>`,
+    );
+    expect(out.code).toContain('<nw-dialog');
+    expect(out.code).toContain('[(visible)]="s"');
+    expect(out.code).toContain('[dismissableMask]="true"');
+    expect(out.code).toContain('</nw-dialog>');
+    expect(out.code).not.toContain('p-drawer');
+  });
 });

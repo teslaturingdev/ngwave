@@ -1303,6 +1303,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   'p-multiSelect',
   dialogAdapter.sourceTag,
   'p-sidebar',
+  'p-drawer',
   tabsAdapter.sourceTag,
   tabAdapter.sourceTag,
   checkboxAdapter.sourceTag,
