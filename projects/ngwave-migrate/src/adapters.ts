@@ -911,6 +911,38 @@ export const listboxAdapter: Adapter = {
 };
 
 // ---------------------------------------------------------------------------
+// SelectButton: p-selectbutton / p-select-button → nw-select-button
+// ---------------------------------------------------------------------------
+
+const SELECT_BUTTON_UNSUPPORTED: Record<string, string> = {
+  optionDisabled: 'per-option disabled key is not supported yet — use a disabled: true field on the option object instead',
+};
+
+const SELECT_BUTTON_RENAMES: Record<string, Rename> = {
+  options: { to: 'options' },
+  optionLabel: { to: 'optionLabel' },
+  optionValue: { to: 'optionValue' },
+  multiple: { to: 'multiple' },
+  disabled: { to: 'disabled' },
+  styleClass: { to: 'class' },
+};
+
+export const selectButtonAdapter: Adapter = {
+  sourceTag: 'p-selectButton',
+  targetTag: 'nw-select-button',
+  importName: 'NwSelectButtonComponent',
+  mapAttr(attr) {
+    const unsupported = SELECT_BUTTON_UNSUPPORTED[attr.name];
+    if (unsupported) {
+      return { bucket: 'unsupported', message: `${attr.raw} — ${unsupported}` };
+    }
+    const r = SELECT_BUTTON_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // SplitButton: p-splitButton → nw-split-button
 // ---------------------------------------------------------------------------
 
@@ -1349,6 +1381,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   ratingAdapter.sourceTag,
   fileUploadAdapter.sourceTag,
   listboxAdapter.sourceTag,
+  selectButtonAdapter.sourceTag,
   menuAdapter.sourceTag,
   splitButtonAdapter.sourceTag,
   overlayPanelAdapter.sourceTag,

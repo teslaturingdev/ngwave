@@ -30,6 +30,7 @@ export * from './lib/overlay-panel';
 export * from './lib/panel';
 export * from './lib/radio';
 export * from './lib/rating';
+export * from './lib/select-button';
 export * from './lib/slider';
 export * from './lib/spinner';
 export * from './lib/split-button';
