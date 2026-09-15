@@ -48,6 +48,7 @@ import {
   tagAdapter,
   textareaAdapter,
   timelineAdapter,
+  toolbarAdapter,
   toastAdapter,
   treeAdapter,
   treeSelectAdapter,
@@ -300,6 +301,28 @@ export function migrate(source: string): MigrationResult {
             bucket: 'manual',
             message:
               'nw-timeline reads content/date/icon/color directly from each item in [value] rather than <ng-template pTemplate="content|opposite|marker">; move that markup into the data array',
+          });
+        }
+      }
+    }
+  }
+
+  // --- p-toolbar (element) ---
+  for (const tag of primengTagAliases('p-toolbar')) {
+    for (const el of findElements(source, tag)) {
+      const { opening, notes: n } = transformOpening(toolbarAdapter, el);
+      edits.push({ start: el.start, end: el.end, replacement: opening });
+      notes.push(...n);
+      imports.add(toolbarAdapter.importName);
+
+      if (!el.selfClosing) {
+        const closeIdx = findMatchingClose(source, tag, el.end);
+        const inner = closeIdx >= 0 ? source.slice(el.end, closeIdx) : source.slice(el.end);
+        if (/pTemplate\s*=\s*["'](start|end|center)["']/.test(inner)) {
+          notes.push({
+            bucket: 'manual',
+            message:
+              'nw-toolbar uses content projection ([toolbarStart]/[toolbarCenter]/[toolbarEnd] attributes) rather than <ng-template pTemplate="start|center|end">; move that markup into a plain element with the matching attribute',
           });
         }
       }
@@ -712,6 +735,7 @@ export function migrate(source: string): MigrationResult {
     ['p-overlaybadge', 'nw-overlay-badge'],
     ['p-message', 'nw-message'],
     ['p-timeline', 'nw-timeline'],
+    ['p-toolbar', 'nw-toolbar'],
     ['p-chart', 'nw-chart'],
     ['p-inputgroup', 'nw-input-group'],
     ['p-inputgroup-addon', 'nw-input-group-addon'],

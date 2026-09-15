@@ -1300,6 +1300,25 @@ const TIMELINE_RENAMES: Record<string, Rename> = {
   styleClass: { to: 'class' },
 };
 
+// ---------------------------------------------------------------------------
+// Toolbar: p-toolbar → nw-toolbar
+// ---------------------------------------------------------------------------
+
+const TOOLBAR_RENAMES: Record<string, Rename> = {
+  styleClass: { to: 'class' },
+};
+
+export const toolbarAdapter: Adapter = {
+  sourceTag: 'p-toolbar',
+  targetTag: 'nw-toolbar',
+  importName: 'NwToolbarComponent',
+  mapAttr(attr) {
+    const r = TOOLBAR_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const timelineAdapter: Adapter = {
   sourceTag: 'p-timeline',
   targetTag: 'nw-timeline',
@@ -1420,6 +1439,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   overlayBadgeAdapter.sourceTag,
   messageAdapter.sourceTag,
   timelineAdapter.sourceTag,
+  toolbarAdapter.sourceTag,
   chartAdapter.sourceTag,
   inputGroupAdapter.sourceTag,
   inputGroupAddonAdapter.sourceTag,
