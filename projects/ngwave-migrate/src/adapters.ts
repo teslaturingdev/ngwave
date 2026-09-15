@@ -1069,6 +1069,85 @@ export const treeSelectAdapter: Adapter = {
 };
 
 // ---------------------------------------------------------------------------
+// Breadcrumb: p-breadcrumb → nw-breadcrumb (component already existed)
+// ---------------------------------------------------------------------------
+
+const BREADCRUMB_RENAMES: Record<string, Rename> = {
+  model: { to: 'items' },
+  styleClass: { to: 'class' },
+};
+
+export const breadcrumbAdapter: Adapter = {
+  sourceTag: 'p-breadcrumb',
+  targetTag: 'nw-breadcrumb',
+  importName: 'NwBreadcrumbComponent',
+  mapAttr(attr) {
+    if (attr.name === 'home') {
+      return {
+        bucket: 'manual',
+        message: `${attr.raw} — nw-breadcrumb has no separate home slot; prepend a home entry to [items] instead`,
+      };
+    }
+    const r = BREADCRUMB_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Popover: p-popover → nw-overlay-panel (functionally equivalent, adapter-only)
+// ---------------------------------------------------------------------------
+
+const POPOVER_RENAMES: Record<string, Rename> = {
+  dismissable: { to: 'dismissable' },
+  showCloseIcon: { to: 'showCloseIcon' },
+  onShow: { to: 'onShow' },
+  onHide: { to: 'onHide' },
+  styleClass: { to: 'class' },
+};
+
+export const popoverAdapter: Adapter = {
+  sourceTag: 'p-popover',
+  targetTag: 'nw-overlay-panel',
+  importName: 'NwOverlayPanelComponent',
+  mapAttr(attr) {
+    const r = POPOVER_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Accordion v19 compositional API: p-accordion-panel → nw-accordion-tab
+// (p-accordion itself is unchanged — same root tag as the legacy API, so the
+// existing accordionAdapter already covers it. p-accordion-header and
+// p-accordion-content are handled with dedicated string transforms in
+// migrate.ts since their targets aren't NgWave components.)
+// ---------------------------------------------------------------------------
+
+const ACCORDION_PANEL_RENAMES: Record<string, Rename> = {
+  disabled: { to: 'disabled' },
+  styleClass: { to: 'class' },
+};
+
+export const accordionPanelAdapter: Adapter = {
+  sourceTag: 'p-accordion-panel',
+  targetTag: 'nw-accordion-tab',
+  importName: 'NwAccordionTabComponent',
+  mapAttr(attr) {
+    if (attr.name === 'value') {
+      return {
+        bucket: 'manual',
+        message: `${attr.raw} — nw-accordion-tab has no per-tab value; expansion is driven by the parent's [expandedIndices]`,
+      };
+    }
+    const r = ACCORDION_PANEL_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Full set of PrimeNG element tags this codemod has an adapter for. Attribute
 // directives (pButton, pInputText, pInputTextarea) apply to plain elements
 // (button/input/textarea) and aren't tag names, so they're listed separately.
@@ -1113,6 +1192,22 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   splitterPanelAdapter.sourceTag,
   treeAdapter.sourceTag,
   treeSelectAdapter.sourceTag,
+  breadcrumbAdapter.sourceTag,
+  popoverAdapter.sourceTag,
+  accordionPanelAdapter.sourceTag,
+  // Strip-only tags: no NgWave component target, handled by dedicated
+  // string transforms in migrate.ts (removed, unwrapped, or renamed to a
+  // plain element) rather than a full Adapter.
+  'p-sortIcon',
+  'p-columnFilter',
+  'p-iconField',
+  'p-inputIcon',
+  'p-fluid',
+  'p-accordion-header',
+  'p-accordion-content',
+  'p-tableHeaderCheckbox',
+  'p-tableCheckbox',
+  'p-buttongroup',
 ];
 
 /** Every casing alias (see primengTagAliases) of every tag this codemod supports. */
@@ -1124,4 +1219,5 @@ export const SUPPORTED_PRIMENG_ATTR_DIRECTIVES: string[] = [
   'pButton',
   'pInputText',
   'pInputTextarea',
+  'pRipple',
 ];

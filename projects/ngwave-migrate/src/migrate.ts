@@ -1,10 +1,12 @@
 import {
   Adapter,
   accordionAdapter,
+  accordionPanelAdapter,
   accordionTabAdapter,
   autocompleteAdapter,
   avatarAdapter,
   avatarGroupAdapter,
+  breadcrumbAdapter,
   buttonAdapter,
   cardAdapter,
   cascadeSelectAdapter,
@@ -21,6 +23,7 @@ import {
   listboxAdapter,
   overlayPanelAdapter,
   panelAdapter,
+  popoverAdapter,
   primengTagAliases,
   radioAdapter,
   ratingAdapter,
@@ -132,6 +135,77 @@ function scanTemplates(inner: string): Note[] {
   return notes;
 }
 
+/** Remove every instance (all casing aliases) of a self-contained element, tag and content included. */
+function stripElement(
+  code: string,
+  sourceTag: string,
+  message: string,
+  bucket: keyof MigrationReport = 'manual',
+): { code: string; notes: Note[] } {
+  let out = code;
+  let found = false;
+  for (const tag of primengTagAliases(sourceTag)) {
+    while (true) {
+      const els = findElements(out, tag);
+      if (els.length === 0) break;
+      const el = els[0];
+      found = true;
+      let end = el.end;
+      if (!el.selfClosing) {
+        const closeIdx = findMatchingClose(out, tag, el.end);
+        end = closeIdx >= 0 ? closeIdx + `</${tag}>`.length : el.end;
+      }
+      out = out.slice(0, el.start) + out.slice(end);
+    }
+  }
+  return { code: out, notes: found ? [{ bucket, message }] : [] };
+}
+
+/** Remove just the open/close tags of an element (all casing aliases), keeping its inner content. */
+function unwrapElement(
+  code: string,
+  sourceTag: string,
+): { code: string; found: boolean } {
+  let out = code;
+  let found = false;
+  for (const tag of primengTagAliases(sourceTag)) {
+    while (true) {
+      const els = findElements(out, tag);
+      if (els.length === 0) break;
+      const el = els[0];
+      found = true;
+      if (el.selfClosing) {
+        out = out.slice(0, el.start) + out.slice(el.end);
+        continue;
+      }
+      const closeIdx = findMatchingClose(out, tag, el.end);
+      if (closeIdx < 0) {
+        out = out.slice(0, el.start) + out.slice(el.end);
+        continue;
+      }
+      const closeEnd = closeIdx + `</${tag}>`.length;
+      out = out.slice(0, closeIdx) + out.slice(closeEnd);
+      out = out.slice(0, el.start) + out.slice(el.end);
+    }
+  }
+  return { code: out, found };
+}
+
+/** Remove a bare attribute (e.g. `pRipple`) wherever it appears in any tag, across the whole source. */
+function stripAttrGlobal(
+  code: string,
+  attrName: string,
+  message: string,
+): { code: string; notes: Note[] } {
+  const re = new RegExp(`\\s${attrName}(?=[\\s/>])`, 'g');
+  let found = false;
+  const out = code.replace(re, () => {
+    found = true;
+    return '';
+  });
+  return { code: out, notes: found ? [{ bucket: 'manual', message }] : [] };
+}
+
 function applyEdits(src: string, edits: Edit[]): string {
   const sorted = [...edits].sort((a, b) => b.start - a.start);
   let out = src;
@@ -228,6 +302,9 @@ export function migrate(source: string): MigrationResult {
     splitterPanelAdapter,
     treeAdapter,
     treeSelectAdapter,
+    breadcrumbAdapter,
+    popoverAdapter,
+    accordionPanelAdapter,
   ];
   for (const adapter of simpleAdapters) {
     for (const tag of primengTagAliases(adapter.sourceTag)) {
@@ -300,8 +377,64 @@ export function migrate(source: string): MigrationResult {
     }
   }
 
+  // --- p-iconField + p-inputIcon + input[pInputText] wrapper pattern ---
+  // Collapses PrimeNG's `<p-iconField><p-inputIcon class="..." /><input pInputText/></p-iconField>`
+  // onto nw-input-text's built-in iconLeft/iconRight, since it already supports icons natively.
+  const consumedInputStarts = new Set<number>();
+  for (const tag of primengTagAliases('p-iconField')) {
+    for (const el of findElements(source, tag)) {
+      if (el.selfClosing) continue;
+      const closeIdx = findMatchingClose(source, tag, el.end);
+      if (closeIdx < 0) continue;
+      const inner = source.slice(el.end, closeIdx);
+
+      let iconClass: string | undefined;
+      let iconElStart = -1;
+      for (const iconTag of primengTagAliases('p-inputIcon')) {
+        const found = findElements(inner, iconTag);
+        if (found.length) {
+          const fe = found[0];
+          const iconAttrs = parseAttributes(fe.attrsText);
+          const classAttr = iconAttrs.find(
+            (a) => a.name === 'class' || a.name === 'styleClass',
+          );
+          iconClass = classAttr?.value ?? '';
+          iconElStart = fe.start;
+          break;
+        }
+      }
+
+      const inputEl = findElements(inner, 'input').find((ie) =>
+        hasPlainAttr(parseAttributes(ie.attrsText), 'pInputText'),
+      );
+
+      if (inputEl && iconClass !== undefined) {
+        const { opening } = transformOpening(inputTextAdapter, inputEl, [
+          'pInputText',
+        ]);
+        const iconAttrName = iconElStart > inputEl.start ? 'iconRight' : 'iconLeft';
+        const merged = opening.replace(
+          /\s*\/?>$/,
+          ` ${iconAttrName}="${iconClass}" />`,
+        );
+        edits.push({
+          start: el.start,
+          end: closeIdx + `</${tag}>`.length,
+          replacement: merged,
+        });
+        notes.push({
+          bucket: 'mapped',
+          message: `<p-iconField>+<p-inputIcon>+input[pInputText] → <nw-input-text ${iconAttrName}="${iconClass}" />`,
+        });
+        imports.add(inputTextAdapter.importName);
+        consumedInputStarts.add(el.end + inputEl.start);
+      }
+    }
+  }
+
   // --- input[pInputText] (attribute directive on a void element) ---
   for (const el of findElements(source, 'input')) {
+    if (consumedInputStarts.has(el.start)) continue;
     const attrs = parseAttributes(el.attrsText);
     if (!hasPlainAttr(attrs, 'pInputText')) continue;
     const { opening, notes: n } = transformOpening(inputTextAdapter, el, [
@@ -382,6 +515,9 @@ export function migrate(source: string): MigrationResult {
     ['p-splitterPanel', 'nw-splitter-panel'],
     ['p-tree', 'nw-tree'],
     ['p-treeSelect', 'nw-tree-select'],
+    ['p-breadcrumb', 'nw-breadcrumb'],
+    ['p-popover', 'nw-overlay-panel'],
+    ['p-accordion-panel', 'nw-accordion-tab'],
   ];
 
   let code = applyEdits(source, edits);
@@ -389,6 +525,148 @@ export function migrate(source: string): MigrationResult {
     for (const alias of primengTagAliases(sourceTag)) {
       code = code.split(`</${alias}>`).join(`</${targetTag}>`);
     }
+  }
+
+  // --- p-fluid: full-width layout wrapper → plain <div class="w-full"> ---
+  for (const tag of primengTagAliases('p-fluid')) {
+    let hadFluid = false;
+    while (true) {
+      const els = findElements(code, tag);
+      if (els.length === 0) break;
+      const el = els[0];
+      hadFluid = true;
+      const replacement = el.selfClosing ? '' : '<div class="w-full">';
+      code = code.slice(0, el.start) + replacement + code.slice(el.end);
+    }
+    if (hadFluid) {
+      for (const alias of primengTagAliases('p-fluid')) {
+        code = code.split(`</${alias}>`).join('</div>');
+      }
+      notes.push({
+        bucket: 'mapped',
+        message: '<p-fluid> → <div class="w-full"> (full-width form layout)',
+      });
+    }
+  }
+
+  // --- p-buttongroup: connected-button wrapper → plain flex div ---
+  for (const tag of primengTagAliases('p-buttongroup')) {
+    let hadGroup = false;
+    while (true) {
+      const els = findElements(code, tag);
+      if (els.length === 0) break;
+      const el = els[0];
+      hadGroup = true;
+      const replacement = el.selfClosing ? '' : '<div class="inline-flex -space-x-px">';
+      code = code.slice(0, el.start) + replacement + code.slice(el.end);
+    }
+    if (hadGroup) {
+      for (const alias of primengTagAliases('p-buttongroup')) {
+        code = code.split(`</${alias}>`).join('</div>');
+      }
+      notes.push({
+        bucket: 'manual',
+        message:
+          '<p-buttongroup> → <div class="inline-flex -space-x-px"> — adjust nw-button rounding manually for a fully connected look if desired',
+      });
+    }
+  }
+
+  // --- p-accordion-header (v19 compositional accordion) → <ng-template nwAccordionHeader> ---
+  for (const tag of primengTagAliases('p-accordion-header')) {
+    let hadHeader = false;
+    while (true) {
+      const els = findElements(code, tag);
+      if (els.length === 0) break;
+      const el = els[0];
+      hadHeader = true;
+      const replacement = el.selfClosing ? '' : '<ng-template nwAccordionHeader>';
+      code = code.slice(0, el.start) + replacement + code.slice(el.end);
+    }
+    if (hadHeader) {
+      for (const alias of primengTagAliases('p-accordion-header')) {
+        code = code.split(`</${alias}>`).join('</ng-template>');
+      }
+      imports.add('NwAccordionHeaderDirective');
+      notes.push({
+        bucket: 'mapped',
+        message:
+          '<p-accordion-header> → <ng-template nwAccordionHeader> — for plain-text headers, the header="" input on nw-accordion-tab is simpler',
+      });
+    }
+  }
+
+  // --- p-accordion-content (v19 compositional accordion) → unwrap, nw-accordion-tab projects its body directly ---
+  {
+    const { code: unwrapped, found } = unwrapElement(code, 'p-accordion-content');
+    code = unwrapped;
+    if (found) {
+      notes.push({
+        bucket: 'mapped',
+        message: '<p-accordion-content> unwrapped — nw-accordion-tab projects its body directly',
+      });
+    }
+  }
+
+  // --- p-iconField / p-inputIcon fallback for shapes the wrapper-pattern block above didn't recognize ---
+  {
+    const { code: unwrapped, found } = unwrapElement(code, 'p-iconField');
+    code = unwrapped;
+    if (found) {
+      notes.push({
+        bucket: 'manual',
+        message:
+          '<p-iconField> unwrapped — could not auto-detect an input[pInputText] inside; set iconLeft/iconRight on the target nw- input component manually',
+      });
+    }
+    const res = stripElement(
+      code,
+      'p-inputIcon',
+      '<p-inputIcon> removed — set its icon class via iconLeft/iconRight on the sibling nw- input component manually',
+      'manual',
+    );
+    code = res.code;
+    notes.push(...res.notes);
+  }
+
+  // --- Strip-only tags with no NgWave target: remove and leave a note ---
+  const STRIP_ELEMENTS: [string, string, keyof MigrationReport][] = [
+    [
+      'p-sortIcon',
+      "<p-sortIcon> removed — nw-data-table's sort indicator is built in automatically",
+      'manual',
+    ],
+    [
+      'p-columnFilter',
+      '<p-columnFilter> removed — configure per-column filtering via the filter property on the matching entry in nw-data-table\'s [columns] array',
+      'manual',
+    ],
+    [
+      'p-tableHeaderCheckbox',
+      '<p-tableHeaderCheckbox> removed — nw-data-table renders the select-all checkbox automatically when [selectable]="true"',
+      'manual',
+    ],
+    [
+      'p-tableCheckbox',
+      '<p-tableCheckbox> removed — nw-data-table renders row checkboxes automatically when [selectable]="true"',
+      'manual',
+    ],
+  ];
+  for (const [tag, message, bucket] of STRIP_ELEMENTS) {
+    const res = stripElement(code, tag, message, bucket);
+    code = res.code;
+    notes.push(...res.notes);
+  }
+
+  // --- pRipple: attribute directive, NgWave has no ripple system — safe to drop ---
+  {
+    const res = stripAttrGlobal(
+      code,
+      'pRipple',
+      'pRipple removed — NgWave has no ripple-effect system; this is safe to drop',
+    );
+    code = res.code;
+    notes.push(...res.notes);
   }
 
   const report: MigrationReport = { mapped: [], manual: [], unsupported: [] };
