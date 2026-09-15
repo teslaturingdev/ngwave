@@ -943,6 +943,28 @@ export const selectButtonAdapter: Adapter = {
 };
 
 // ---------------------------------------------------------------------------
+// ProgressBar: p-progressBar → nw-progress-bar
+// ---------------------------------------------------------------------------
+
+const PROGRESS_BAR_RENAMES: Record<string, Rename> = {
+  value: { to: 'value' },
+  mode: { to: 'mode' },
+  showValue: { to: 'showValue' },
+  styleClass: { to: 'class' },
+};
+
+export const progressBarAdapter: Adapter = {
+  sourceTag: 'p-progressBar',
+  targetTag: 'nw-progress-bar',
+  importName: 'NwProgressBarComponent',
+  mapAttr(attr) {
+    const r = PROGRESS_BAR_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // SplitButton: p-splitButton → nw-split-button
 // ---------------------------------------------------------------------------
 
@@ -1382,6 +1404,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   fileUploadAdapter.sourceTag,
   listboxAdapter.sourceTag,
   selectButtonAdapter.sourceTag,
+  progressBarAdapter.sourceTag,
   menuAdapter.sourceTag,
   splitButtonAdapter.sourceTag,
   overlayPanelAdapter.sourceTag,

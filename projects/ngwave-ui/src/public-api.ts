@@ -28,6 +28,7 @@ export * from './lib/menu';
 export * from './lib/message';
 export * from './lib/overlay-panel';
 export * from './lib/panel';
+export * from './lib/progress-bar';
 export * from './lib/radio';
 export * from './lib/rating';
 export * from './lib/select-button';
