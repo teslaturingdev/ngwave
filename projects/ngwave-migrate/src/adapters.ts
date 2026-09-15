@@ -1481,4 +1481,5 @@ export const SUPPORTED_PRIMENG_ATTR_DIRECTIVES: string[] = [
   'pInputTextarea',
   'pRipple',
   'pBadge',
+  'pTooltip',
 ];

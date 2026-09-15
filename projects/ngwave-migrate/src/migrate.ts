@@ -217,6 +217,27 @@ function stripAttrGlobal(
   return { code: out, notes: found ? [{ bucket: 'manual', message }] : [] };
 }
 
+/**
+ * Renames an attribute (e.g. `pTooltip`) wherever it appears on any tag,
+ * across the whole source, preserving plain vs. bound ([x]) form and the
+ * attribute's value. Not tag-specific, unlike every other adapter here —
+ * PrimeNG directives like pTooltip attach to arbitrary host elements.
+ */
+function renameAttrGlobal(
+  code: string,
+  fromName: string,
+  toName: string,
+  message: string,
+): { code: string; notes: Note[] } {
+  const re = new RegExp(`(\\[?)\\b${fromName}\\b(\\]?)(=["'][^"']*["'])?`, 'g');
+  let found = false;
+  const out = code.replace(re, (_m, open: string, close: string, val: string | undefined) => {
+    found = true;
+    return `${open}${toName}${close}${val ?? ''}`;
+  });
+  return { code: out, notes: found ? [{ bucket: 'mapped', message }] : [] };
+}
+
 function applyEdits(src: string, edits: Edit[]): string {
   const sorted = [...edits].sort((a, b) => b.start - a.start);
   let out = src;
@@ -888,6 +909,19 @@ export function migrate(source: string): MigrationResult {
     );
     code = res.code;
     notes.push(...res.notes);
+  }
+
+  // --- pTooltip: attribute directive on an arbitrary host element → nwTooltip ---
+  {
+    const res = renameAttrGlobal(
+      code,
+      'pTooltip',
+      'nwTooltip',
+      'pTooltip → nwTooltip (NwTooltipDirective) — tooltipPosition keeps the same name',
+    );
+    code = res.code;
+    notes.push(...res.notes);
+    if (res.notes.length) imports.add('NwTooltipDirective');
   }
 
   // --- pBadge: attribute directive that overlays a badge on its host element.

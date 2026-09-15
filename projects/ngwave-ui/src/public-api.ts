@@ -43,5 +43,6 @@ export * from './lib/timeline';
 export * from './lib/toast';
 export * from './lib/toggle';
 export * from './lib/toolbar';
+export * from './lib/tooltip';
 export * from './lib/tree';
 export * from './lib/tree-select';
