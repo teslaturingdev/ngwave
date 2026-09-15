@@ -1341,6 +1341,32 @@ export const toggleButtonAdapter: Adapter = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// MegaMenu: p-megaMenu → nw-mega-menu
+// ---------------------------------------------------------------------------
+
+const MEGA_MENU_RENAMES: Record<string, Rename> = {
+  styleClass: { to: 'class' },
+};
+
+export const megaMenuAdapter: Adapter = {
+  sourceTag: 'p-megaMenu',
+  targetTag: 'nw-mega-menu',
+  importName: 'NwMegaMenuComponent',
+  mapAttr(attr) {
+    if (attr.name === 'model') {
+      return {
+        bucket: 'manual',
+        message:
+          '<p-megaMenu [model]> — PrimeNG nests sub-items as MegaMenuItem[][] (columns of items); nw-mega-menu expects { items: { headerLabel?, items }[] }[] — restructure the data manually',
+      };
+    }
+    const r = MEGA_MENU_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const timelineAdapter: Adapter = {
   sourceTag: 'p-timeline',
   targetTag: 'nw-timeline',
@@ -1447,6 +1473,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   selectButtonAdapter.sourceTag,
   progressBarAdapter.sourceTag,
   toggleButtonAdapter.sourceTag,
+  megaMenuAdapter.sourceTag,
   menuAdapter.sourceTag,
   splitButtonAdapter.sourceTag,
   overlayPanelAdapter.sourceTag,

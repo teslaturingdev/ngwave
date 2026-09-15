@@ -11,6 +11,7 @@ import { TabsDocPageComponent } from './pages/tabs.page';
 import { ToastPageComponent } from './pages/toast.page';
 import { MessageDocPageComponent } from './pages/message.page';
 import { MenuDocPageComponent } from './pages/menu.page';
+import { MegaMenuDocPageComponent } from './pages/mega-menu.page';
 import { InputDocPageComponent } from './pages/input.page';
 import { InputGroupDocPageComponent } from './pages/input-group.page';
 import { AutocompleteDocPageComponent } from './pages/autocomplete.page';
@@ -92,6 +93,7 @@ export const routes: Routes = [
   { path: 'components/toast', component: ToastPageComponent },
   { path: 'components/message', component: MessageDocPageComponent },
   { path: 'components/menu', component: MenuDocPageComponent },
+  { path: 'components/mega-menu', component: MegaMenuDocPageComponent },
   { path: 'components/tabs', component: TabsDocPageComponent },
   { path: 'components/checkbox', component: CheckboxDocPageComponent },
   { path: 'components/spinner', component: SpinnerDocPageComponent },
