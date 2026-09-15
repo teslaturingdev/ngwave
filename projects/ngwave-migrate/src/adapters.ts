@@ -1266,6 +1266,30 @@ export const chartAdapter: Adapter = {
 };
 
 // ---------------------------------------------------------------------------
+// InputGroup: p-inputgroup / p-inputgroup-addon → nw-input-group / nw-input-group-addon
+// ---------------------------------------------------------------------------
+
+export const inputGroupAdapter: Adapter = {
+  sourceTag: 'p-inputgroup',
+  targetTag: 'nw-input-group',
+  importName: 'NwInputGroupComponent',
+  mapAttr(attr) {
+    if (attr.name === 'styleClass') return rename(attr, { to: 'class' });
+    return { bucket: 'passthrough' };
+  },
+};
+
+export const inputGroupAddonAdapter: Adapter = {
+  sourceTag: 'p-inputgroup-addon',
+  targetTag: 'nw-input-group-addon',
+  importName: 'NwInputGroupAddonComponent',
+  mapAttr(attr) {
+    if (attr.name === 'styleClass') return rename(attr, { to: 'class' });
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Full set of PrimeNG element tags this codemod has an adapter for. Attribute
 // directives (pButton, pInputText, pInputTextarea) apply to plain elements
 // (button/input/textarea) and aren't tag names, so they're listed separately.
@@ -1318,6 +1342,8 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   messageAdapter.sourceTag,
   timelineAdapter.sourceTag,
   chartAdapter.sourceTag,
+  inputGroupAdapter.sourceTag,
+  inputGroupAddonAdapter.sourceTag,
   // Strip-only tags: no NgWave component target, handled by dedicated
   // string transforms in migrate.ts (removed, unwrapped, or renamed to a
   // plain element) rather than a full Adapter.

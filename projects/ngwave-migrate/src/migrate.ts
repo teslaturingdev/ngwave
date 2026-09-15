@@ -20,6 +20,8 @@ import {
   dropdownAdapter,
   fieldsetAdapter,
   fileUploadAdapter,
+  inputGroupAdapter,
+  inputGroupAddonAdapter,
   inputNumberAdapter,
   inputTextAdapter,
   listboxAdapter,
@@ -411,6 +413,8 @@ export function migrate(source: string): MigrationResult {
     overlayBadgeAdapter,
     messageAdapter,
     chartAdapter,
+    inputGroupAdapter,
+    inputGroupAddonAdapter,
   ];
   for (const adapter of simpleAdapters) {
     for (const tag of primengTagAliases(adapter.sourceTag)) {
@@ -630,6 +634,8 @@ export function migrate(source: string): MigrationResult {
     ['p-message', 'nw-message'],
     ['p-timeline', 'nw-timeline'],
     ['p-chart', 'nw-chart'],
+    ['p-inputgroup', 'nw-input-group'],
+    ['p-inputgroup-addon', 'nw-input-group-addon'],
   ];
 
   let code = applyEdits(source, edits);

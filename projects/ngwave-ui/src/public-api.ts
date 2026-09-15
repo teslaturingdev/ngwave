@@ -22,6 +22,7 @@ export * from './lib/fieldset';
 export * from './lib/file-upload';
 export * from './lib/icon';
 export * from './lib/input';
+export * from './lib/input-group';
 export * from './lib/listbox';
 export * from './lib/message';
 export * from './lib/overlay-panel';

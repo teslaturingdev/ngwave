@@ -11,6 +11,7 @@ import { TabsDocPageComponent } from './pages/tabs.page';
 import { ToastPageComponent } from './pages/toast.page';
 import { MessageDocPageComponent } from './pages/message.page';
 import { InputDocPageComponent } from './pages/input.page';
+import { InputGroupDocPageComponent } from './pages/input-group.page';
 import { AutocompleteDocPageComponent } from './pages/autocomplete.page';
 import { ChangelogPageComponent } from './pages/changelog.page';
 import { DividerDocPageComponent } from './pages/divider.page';
@@ -80,6 +81,7 @@ export const routes: Routes = [
   { path: 'components/dropdown', component: DropdownPageComponent },
   { path: 'components/autocomplete', component: AutocompleteDocPageComponent },
   { path: 'components/input', component: InputDocPageComponent },
+  { path: 'components/input-group', component: InputGroupDocPageComponent },
   { path: 'components/dialog', component: DialogPageComponent },
   { path: 'components/toast', component: ToastPageComponent },
   { path: 'components/message', component: MessageDocPageComponent },
