@@ -51,5 +51,6 @@ export class App {
     { label: 'Tree Select', path: '/components/tree-select' },
     { label: 'Timeline', path: '/components/timeline' },
     { label: 'Float Label', path: '/components/float-label' },
+    { label: 'Password', path: '/components/password' },
   ];
 }

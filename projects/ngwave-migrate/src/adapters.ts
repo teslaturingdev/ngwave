@@ -1511,6 +1511,38 @@ export const floatLabelAdapter: Adapter = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// Password: p-password → nw-password
+// ---------------------------------------------------------------------------
+
+const PASSWORD_RENAMES: Record<string, string> = {
+  styleClass: 'class',
+};
+
+export const passwordAdapter: Adapter = {
+  sourceTag: 'p-password',
+  targetTag: 'nw-password',
+  importName: 'NwPasswordComponent',
+  mapAttr(attr) {
+    if (attr.name === 'toggleMask') {
+      return {
+        bucket: 'manual',
+        message: `${attr.raw} — nw-password always shows a show/hide toggle; toggleMask has no effect`,
+      };
+    }
+    if (attr.name === 'mediumRegex' || attr.name === 'strongRegex' || attr.name === 'promptLabel'
+      || attr.name === 'weakLabel' || attr.name === 'mediumLabel' || attr.name === 'strongLabel') {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-password's strength meter uses fixed length thresholds; custom regex/labels aren't supported`,
+      };
+    }
+    const r = PASSWORD_RENAMES[attr.name];
+    if (r) return rename(attr, { to: r });
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const timelineAdapter: Adapter = {
   sourceTag: 'p-timeline',
   targetTag: 'nw-timeline',
@@ -1660,6 +1692,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   'p-buttongroup',
   treeTableAdapter.sourceTag,
   floatLabelAdapter.sourceTag,
+  passwordAdapter.sourceTag,
   // Tabs v19 compositional API (p-tabpanel is already covered via the
   // legacy tabAdapter's casing-alias expansion of p-tabPanel).
   'p-tabs',
