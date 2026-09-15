@@ -11,6 +11,7 @@ import {
   buttonAdapter,
   cardAdapter,
   cascadeSelectAdapter,
+  chartAdapter,
   checkboxAdapter,
   chipAdapter,
   dataTableAdapter,
@@ -409,6 +410,7 @@ export function migrate(source: string): MigrationResult {
     badgeAdapter,
     overlayBadgeAdapter,
     messageAdapter,
+    chartAdapter,
   ];
   for (const adapter of simpleAdapters) {
     for (const tag of primengTagAliases(adapter.sourceTag)) {
@@ -627,6 +629,7 @@ export function migrate(source: string): MigrationResult {
     ['p-overlaybadge', 'nw-overlay-badge'],
     ['p-message', 'nw-message'],
     ['p-timeline', 'nw-timeline'],
+    ['p-chart', 'nw-chart'],
   ];
 
   let code = applyEdits(source, edits);

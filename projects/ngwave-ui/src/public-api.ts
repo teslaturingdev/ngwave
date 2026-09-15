@@ -11,6 +11,7 @@ export * from './lib/breadcrumb';
 export * from './lib/button';
 export * from './lib/card';
 export * from './lib/cascade-select';
+export * from './lib/chart';
 export * from './lib/checkbox';
 export * from './lib/chip';
 export * from './lib/data-table';

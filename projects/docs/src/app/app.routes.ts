@@ -30,6 +30,7 @@ import { ListboxDocPageComponent } from './pages/listbox.page';
 import { SplitButtonDocPageComponent } from './pages/split-button.page';
 import { OverlayPanelDocPageComponent } from './pages/overlay-panel.page';
 import { CascadeSelectDocPageComponent } from './pages/cascade-select.page';
+import { ChartDocPageComponent } from './pages/chart.page';
 import { SplitterDocPageComponent } from './pages/splitter.page';
 import { TreeDocPageComponent } from './pages/tree.page';
 import { TreeSelectDocPageComponent } from './pages/tree-select.page';
@@ -102,6 +103,7 @@ export const routes: Routes = [
   { path: 'components/split-button', component: SplitButtonDocPageComponent },
   { path: 'components/overlay-panel', component: OverlayPanelDocPageComponent },
   { path: 'components/cascade-select', component: CascadeSelectDocPageComponent },
+  { path: 'components/chart', component: ChartDocPageComponent },
   { path: 'components/splitter', component: SplitterDocPageComponent },
   { path: 'components/tree', component: TreeDocPageComponent },
   { path: 'components/tree-select', component: TreeSelectDocPageComponent },

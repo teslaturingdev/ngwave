@@ -45,6 +45,7 @@ export class App {
     { label: 'Split Button', path: '/components/split-button' },
     { label: 'Overlay Panel', path: '/components/overlay-panel' },
     { label: 'Cascade Select', path: '/components/cascade-select' },
+    { label: 'Chart', path: '/components/chart' },
     { label: 'Splitter', path: '/components/splitter' },
     { label: 'Tree', path: '/components/tree' },
     { label: 'Tree Select', path: '/components/tree-select' },

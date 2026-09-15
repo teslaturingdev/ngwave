@@ -1243,6 +1243,29 @@ export const timelineAdapter: Adapter = {
 };
 
 // ---------------------------------------------------------------------------
+// Chart: p-chart → nw-chart (wraps Chart.js in both libraries)
+// ---------------------------------------------------------------------------
+
+const CHART_RENAMES: Record<string, Rename> = {
+  type: { to: 'type' },
+  data: { to: 'data' },
+  options: { to: 'options' },
+  height: { to: 'height' },
+  styleClass: { to: 'class' },
+};
+
+export const chartAdapter: Adapter = {
+  sourceTag: 'p-chart',
+  targetTag: 'nw-chart',
+  importName: 'NwChartComponent',
+  mapAttr(attr) {
+    const r = CHART_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Full set of PrimeNG element tags this codemod has an adapter for. Attribute
 // directives (pButton, pInputText, pInputTextarea) apply to plain elements
 // (button/input/textarea) and aren't tag names, so they're listed separately.
@@ -1294,6 +1317,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   overlayBadgeAdapter.sourceTag,
   messageAdapter.sourceTag,
   timelineAdapter.sourceTag,
+  chartAdapter.sourceTag,
   // Strip-only tags: no NgWave component target, handled by dedicated
   // string transforms in migrate.ts (removed, unwrapped, or renamed to a
   // plain element) rather than a full Adapter.
