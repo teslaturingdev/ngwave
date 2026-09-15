@@ -22,7 +22,7 @@ export interface NwTimelineEvent {
   imports: [NwIconComponent],
   template: `
     <ol class="relative">
-      @for (event of value(); track $index; let last = $last, let i = $index) {
+      @for (event of value(); track $index; let last = $last; let i = $index) {
         <li
           class="relative flex gap-4"
           [class.pb-6]="!last"
