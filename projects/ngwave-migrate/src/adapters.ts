@@ -961,6 +961,27 @@ export const overlayPanelAdapter: Adapter = {
 };
 
 // ---------------------------------------------------------------------------
+// Menu: p-menu → nw-menu
+// ---------------------------------------------------------------------------
+
+const MENU_RENAMES: Record<string, Rename> = {
+  model: { to: 'model' },
+  popup: { to: 'popup' },
+  styleClass: { to: 'class' },
+};
+
+export const menuAdapter: Adapter = {
+  sourceTag: 'p-menu',
+  targetTag: 'nw-menu',
+  importName: 'NwMenuComponent',
+  mapAttr(attr) {
+    const r = MENU_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // CascadeSelect: p-cascadeSelect → nw-cascade-select
 // ---------------------------------------------------------------------------
 
@@ -1328,6 +1349,7 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   ratingAdapter.sourceTag,
   fileUploadAdapter.sourceTag,
   listboxAdapter.sourceTag,
+  menuAdapter.sourceTag,
   splitButtonAdapter.sourceTag,
   overlayPanelAdapter.sourceTag,
   cascadeSelectAdapter.sourceTag,

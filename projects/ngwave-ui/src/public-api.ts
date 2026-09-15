@@ -24,6 +24,7 @@ export * from './lib/icon';
 export * from './lib/input';
 export * from './lib/input-group';
 export * from './lib/listbox';
+export * from './lib/menu';
 export * from './lib/message';
 export * from './lib/overlay-panel';
 export * from './lib/panel';
