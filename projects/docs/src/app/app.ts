@@ -53,5 +53,7 @@ export class App {
     { label: 'Float Label', path: '/components/float-label' },
     { label: 'Password', path: '/components/password' },
     { label: 'Data View', path: '/components/data-view' },
+    { label: 'Pick List', path: '/components/pick-list' },
+    { label: 'Order List', path: '/components/order-list' },
   ];
 }

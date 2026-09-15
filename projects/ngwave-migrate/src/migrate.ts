@@ -61,6 +61,8 @@ import {
   toggleButtonAdapter,
   toolbarAdapter,
   dataViewAdapter,
+  pickListAdapter,
+  orderListAdapter,
   toastAdapter,
   treeAdapter,
   treeSelectAdapter,
@@ -379,6 +381,50 @@ export function migrate(source: string): MigrationResult {
             message:
               'nw-data-view renders one item at a time via <ng-template nwDataViewItem let-item> rather than <ng-template pTemplate="list|grid" let-items> (a whole page of items); rewrite the template to consume a single item and drop its own *ngFor',
           });
+        }
+      }
+    }
+  }
+
+  // --- p-pickList (element) — its per-item pTemplate="item" already matches
+  // nw-pick-list's per-item template shape, so it's rewritten in place rather
+  // than just flagged as a manual note.
+  for (const tag of primengTagAliases('p-pickList')) {
+    for (const el of findElements(source, tag)) {
+      const { opening, notes: n } = transformOpening(pickListAdapter, el);
+      edits.push({ start: el.start, end: el.end, replacement: opening });
+      notes.push(...n);
+      imports.add(pickListAdapter.importName);
+
+      if (!el.selfClosing) {
+        const closeIdx = findMatchingClose(source, tag, el.end);
+        if (closeIdx >= 0) {
+          const inner = source.slice(el.end, closeIdx);
+          const rewritten = inner.replace(/pTemplate\s*=\s*(["'])item\1/g, 'nwPickListItem');
+          if (rewritten !== inner) {
+            edits.push({ start: el.end, end: closeIdx, replacement: rewritten });
+          }
+        }
+      }
+    }
+  }
+
+  // --- p-orderList (element) — same per-item template shape as p-pickList. ---
+  for (const tag of primengTagAliases('p-orderList')) {
+    for (const el of findElements(source, tag)) {
+      const { opening, notes: n } = transformOpening(orderListAdapter, el);
+      edits.push({ start: el.start, end: el.end, replacement: opening });
+      notes.push(...n);
+      imports.add(orderListAdapter.importName);
+
+      if (!el.selfClosing) {
+        const closeIdx = findMatchingClose(source, tag, el.end);
+        if (closeIdx >= 0) {
+          const inner = source.slice(el.end, closeIdx);
+          const rewritten = inner.replace(/pTemplate\s*=\s*(["'])item\1/g, 'nwOrderListItem');
+          if (rewritten !== inner) {
+            edits.push({ start: el.end, end: closeIdx, replacement: rewritten });
+          }
         }
       }
     }
@@ -814,6 +860,8 @@ export function migrate(source: string): MigrationResult {
     ['p-timeline', 'nw-timeline'],
     ['p-toolbar', 'nw-toolbar'],
     ['p-dataView', 'nw-data-view'],
+    ['p-pickList', 'nw-pick-list'],
+    ['p-orderList', 'nw-order-list'],
     ['p-chart', 'nw-chart'],
     ['p-inputgroup', 'nw-input-group'],
     ['p-inputgroup-addon', 'nw-input-group-addon'],

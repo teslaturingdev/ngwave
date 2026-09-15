@@ -1538,6 +1538,53 @@ export const dataViewAdapter: Adapter = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// PickList: p-pickList → nw-pick-list
+// ---------------------------------------------------------------------------
+
+const PICK_LIST_RENAMES: Record<string, string> = {
+  source: 'source',
+  target: 'target',
+  sourceHeader: 'sourceHeader',
+  targetHeader: 'targetHeader',
+};
+
+export const pickListAdapter: Adapter = {
+  sourceTag: 'p-pickList',
+  targetTag: 'nw-pick-list',
+  importName: 'NwPickListComponent',
+  mapAttr(attr) {
+    if (attr.name === 'dragdrop') {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-pick-list is button-only; drag-and-drop isn't supported`,
+      };
+    }
+    const r = PICK_LIST_RENAMES[attr.name];
+    if (r) return rename(attr, { to: r });
+    return { bucket: 'passthrough' };
+  },
+};
+
+// ---------------------------------------------------------------------------
+// OrderList: p-orderList → nw-order-list
+// ---------------------------------------------------------------------------
+
+export const orderListAdapter: Adapter = {
+  sourceTag: 'p-orderList',
+  targetTag: 'nw-order-list',
+  importName: 'NwOrderListComponent',
+  mapAttr(attr) {
+    if (attr.name === 'dragdrop') {
+      return {
+        bucket: 'unsupported',
+        message: `${attr.raw} — nw-order-list is reorder-button only; drag-and-drop isn't supported`,
+      };
+    }
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const passwordAdapter: Adapter = {
   sourceTag: 'p-password',
   targetTag: 'nw-password',
@@ -1713,6 +1760,8 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   floatLabelAdapter.sourceTag,
   passwordAdapter.sourceTag,
   dataViewAdapter.sourceTag,
+  pickListAdapter.sourceTag,
+  orderListAdapter.sourceTag,
   // Tabs v19 compositional API (p-tabpanel is already covered via the
   // legacy tabAdapter's casing-alias expansion of p-tabPanel).
   'p-tabs',
