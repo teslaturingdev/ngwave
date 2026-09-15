@@ -1208,6 +1208,12 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   'p-tableHeaderCheckbox',
   'p-tableCheckbox',
   'p-buttongroup',
+  // Tabs v19 compositional API (p-tabpanel is already covered via the
+  // legacy tabAdapter's casing-alias expansion of p-tabPanel).
+  'p-tabs',
+  'p-tablist',
+  'p-tab',
+  'p-tabpanels',
 ];
 
 /** Every casing alias (see primengTagAliases) of every tag this codemod supports. */

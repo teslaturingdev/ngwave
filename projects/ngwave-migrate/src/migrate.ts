@@ -272,6 +272,81 @@ export function migrate(source: string): MigrationResult {
     }
   }
 
+  // --- p-tabs / p-tablist / p-tab / p-tabpanels / p-tabpanel (PrimeNG v19
+  // compositional Tabs API) → nw-tabs / nw-tab. Structurally distinct from
+  // the legacy p-tabView/p-tabPanel API (separate header list + panel list
+  // vs. NgWave's single paired nw-tab), so this restructures the whole
+  // <p-tabs> subtree in one edit rather than a per-attribute rename. Note:
+  // PrimeNG's own casing-alias scheme makes lowercase `p-tabpanel` (this
+  // API's individual panel) collide with legacy p-tabPanel's lowercase
+  // alias — consumedTabsRanges below tells the legacy tabAdapter loop to
+  // skip anything already claimed here.
+  const consumedTabsRanges: [number, number][] = [];
+  for (const el of findElements(source, 'p-tabs')) {
+    if (el.selfClosing) continue;
+    const closeIdx = findMatchingClose(source, 'p-tabs', el.end);
+    if (closeIdx < 0) continue;
+    const outerEnd = closeIdx + '</p-tabs>'.length;
+    consumedTabsRanges.push([el.start, outerEnd]);
+    const inner = source.slice(el.end, closeIdx);
+
+    const tabs: { value: string; header: string }[] = [];
+    for (const te of findElements(inner, 'p-tab')) {
+      const attrs = parseAttributes(te.attrsText);
+      const value = attrs.find((a) => a.name === 'value')?.value ?? String(tabs.length);
+      const closeI = te.selfClosing ? te.end : findMatchingClose(inner, 'p-tab', te.end);
+      const header = te.selfClosing
+        ? ''
+        : (closeI >= 0 ? inner.slice(te.end, closeI) : '').trim();
+      tabs.push({ value, header });
+    }
+
+    const panels = new Map<string, string>();
+    for (const pe of findElements(inner, 'p-tabpanel')) {
+      const attrs = parseAttributes(pe.attrsText);
+      const value = attrs.find((a) => a.name === 'value')?.value ?? String(panels.size);
+      const closeI = pe.selfClosing ? pe.end : findMatchingClose(inner, 'p-tabpanel', pe.end);
+      const body = pe.selfClosing ? '' : closeI >= 0 ? inner.slice(pe.end, closeI) : '';
+      panels.set(value, body);
+    }
+
+    let activeAttr = '';
+    const tabsAttrs = parseAttributes(el.attrsText);
+    const valueAttr = tabsAttrs.find((a) => a.name === 'value');
+    if (valueAttr) {
+      if (valueAttr.kind !== 'plain') {
+        notes.push({
+          bucket: 'manual',
+          message:
+            '<p-tabs> [value]/(valueChange) binding — wire nw-tabs [(activeIndex)] to your own numeric index manually',
+        });
+      } else {
+        const idx = tabs.findIndex((t) => t.value === valueAttr.value);
+        if (idx >= 0) activeAttr = ` activeIndex="${idx}"`;
+      }
+    }
+
+    const tabsMarkup = tabs
+      .map(
+        (t) =>
+          `<nw-tab header="${t.header.replace(/"/g, '&quot;')}">${panels.get(t.value) ?? ''}</nw-tab>`,
+      )
+      .join('\n  ');
+
+    edits.push({
+      start: el.start,
+      end: outerEnd,
+      replacement: `<nw-tabs${activeAttr}>\n  ${tabsMarkup}\n</nw-tabs>`,
+    });
+    notes.push({
+      bucket: 'mapped',
+      message:
+        '<p-tabs>/<p-tablist>/<p-tab>/<p-tabpanels>/<p-tabpanel> (v19 compositional API) → <nw-tabs>/<nw-tab>',
+    });
+    imports.add('NwTabsComponent');
+    imports.add('NwTabComponent');
+  }
+
   // --- simple element adapters (opening transform + closing rename) ---
   const simpleAdapters: Adapter[] = [
     tabsAdapter,
@@ -309,6 +384,7 @@ export function migrate(source: string): MigrationResult {
   for (const adapter of simpleAdapters) {
     for (const tag of primengTagAliases(adapter.sourceTag)) {
       for (const el of findElements(source, tag)) {
+        if (consumedTabsRanges.some(([s, e]) => el.start >= s && el.start < e)) continue;
         const { opening, notes: n } = transformOpening(adapter, el);
         edits.push({ start: el.start, end: el.end, replacement: opening });
         notes.push(...n);
