@@ -53,3 +53,4 @@ export * from './lib/toolbar';
 export * from './lib/tooltip';
 export * from './lib/tree';
 export * from './lib/tree-select';
+export * from './lib/tree-table';

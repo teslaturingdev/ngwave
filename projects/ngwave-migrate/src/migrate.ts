@@ -50,6 +50,7 @@ import {
   textareaAdapter,
   confirmDialogAdapter,
   confirmPopupAdapter,
+  treeTableAdapter,
   contextMenuAdapter,
   menubarAdapter,
   panelMenuAdapter,
@@ -528,6 +529,7 @@ export function migrate(source: string): MigrationResult {
     toggleButtonAdapter,
     confirmDialogAdapter,
     confirmPopupAdapter,
+    treeTableAdapter,
     contextMenuAdapter,
     menubarAdapter,
     panelMenuAdapter,
@@ -758,6 +760,7 @@ export function migrate(source: string): MigrationResult {
     ['p-selectButton', 'nw-select-button'],
     ['p-progressBar', 'nw-progress-bar'],
     ['p-toggleButton', 'nw-toggle-button'],
+    ['p-treeTable', 'nw-tree-table'],
     ['p-confirmDialog', 'nw-confirm-dialog'],
     ['p-confirmPopup', 'nw-confirm-popup'],
     ['p-contextMenu', 'nw-context-menu'],
@@ -915,6 +918,16 @@ export function migrate(source: string): MigrationResult {
     [
       'p-tableCheckbox',
       '<p-tableCheckbox> removed — nw-data-table renders row checkboxes automatically when [selectable]="true"',
+      'manual',
+    ],
+    [
+      'p-treeTableToggler',
+      '<p-treeTableToggler> removed — nw-tree-table renders the expand/collapse toggle automatically',
+      'manual',
+    ],
+    [
+      'p-treeTableCheckbox',
+      '<p-treeTableCheckbox> removed — nw-tree-table renders row checkboxes automatically when [selectionMode]="\'checkbox\'"',
       'manual',
     ],
   ];

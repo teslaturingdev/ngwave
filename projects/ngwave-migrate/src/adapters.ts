@@ -1469,6 +1469,29 @@ export const confirmPopupAdapter: Adapter = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// TreeTable: p-treeTable → nw-tree-table
+// ---------------------------------------------------------------------------
+
+const TREE_TABLE_RENAMES: Record<string, Rename> = {
+  value: { to: 'value' },
+  selectionMode: { to: 'selectionMode' },
+  selection: { to: 'selection' },
+  styleClass: { to: 'class' },
+};
+
+export const treeTableAdapter: Adapter = {
+  sourceTag: 'p-treeTable',
+  targetTag: 'nw-tree-table',
+  importName: 'NwTreeTableComponent',
+  mapAttr(attr) {
+    if (attr.name === 'columns') return rename(attr, { to: 'columns' });
+    const r = TREE_TABLE_RENAMES[attr.name];
+    if (r) return rename(attr, r);
+    return { bucket: 'passthrough' };
+  },
+};
+
 export const timelineAdapter: Adapter = {
   sourceTag: 'p-timeline',
   targetTag: 'nw-timeline',
@@ -1613,7 +1636,10 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   'p-accordion-content',
   'p-tableHeaderCheckbox',
   'p-tableCheckbox',
+  'p-treeTableToggler',
+  'p-treeTableCheckbox',
   'p-buttongroup',
+  treeTableAdapter.sourceTag,
   // Tabs v19 compositional API (p-tabpanel is already covered via the
   // legacy tabAdapter's casing-alias expansion of p-tabPanel).
   'p-tabs',
