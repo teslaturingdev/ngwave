@@ -376,6 +376,73 @@ export function migrate(source: string): MigrationResult {
     imports.add('NwTabComponent');
   }
 
+  // --- p-stepper / p-step-list / p-step / p-step-panels / p-step-panel
+  // (PrimeNG v19 compositional Stepper API) → nw-steps. Structurally
+  // distinct from the legacy p-steps (already supported): nw-steps is a
+  // pure step *indicator* with no content-rendering slot, so only the step
+  // headers become nw-steps [items]; panel bodies are left as sibling
+  // content with a manual note, since automatically wiring their
+  // show/hide to activeIndex isn't something this codemod can do safely.
+  for (const el of findElements(source, 'p-stepper')) {
+    if (el.selfClosing) continue;
+    const closeIdx = findMatchingClose(source, 'p-stepper', el.end);
+    if (closeIdx < 0) continue;
+    const outerEnd = closeIdx + '</p-stepper>'.length;
+    const inner = source.slice(el.end, closeIdx);
+
+    const steps: { value: string; label: string }[] = [];
+    for (const se of findElements(inner, 'p-step')) {
+      const attrs = parseAttributes(se.attrsText);
+      const value = attrs.find((a) => a.name === 'value')?.value ?? String(steps.length);
+      const closeI = se.selfClosing ? se.end : findMatchingClose(inner, 'p-step', se.end);
+      const label = se.selfClosing
+        ? ''
+        : (closeI >= 0 ? inner.slice(se.end, closeI) : '').trim();
+      steps.push({ value, label });
+    }
+
+    const panelBodies: string[] = [];
+    for (const pe of findElements(inner, 'p-step-panel')) {
+      const closeI = pe.selfClosing
+        ? pe.end
+        : findMatchingClose(inner, 'p-step-panel', pe.end);
+      const body = pe.selfClosing ? '' : closeI >= 0 ? inner.slice(pe.end, closeI) : '';
+      panelBodies.push(body);
+    }
+
+    let activeAttr = '';
+    const stepperAttrs = parseAttributes(el.attrsText);
+    const valueAttr = stepperAttrs.find((a) => a.name === 'value');
+    if (valueAttr) {
+      if (valueAttr.kind !== 'plain') {
+        notes.push({
+          bucket: 'manual',
+          message:
+            '<p-stepper> [value]/(valueChange) binding — wire nw-steps [(activeIndex)] to your own numeric index manually',
+        });
+      } else {
+        const idx = steps.findIndex((s) => s.value === valueAttr.value);
+        if (idx >= 0) activeAttr = ` activeIndex="${idx}"`;
+      }
+    }
+
+    const itemsArray = steps.length
+      ? `[${steps.map((s) => `{ label: '${s.label.replace(/'/g, "\\'")}' }`).join(', ')}]`
+      : '[]';
+
+    edits.push({
+      start: el.start,
+      end: outerEnd,
+      replacement: `<nw-steps [items]="${itemsArray}"${activeAttr} />\n${panelBodies.join('\n')}`,
+    });
+    notes.push({
+      bucket: 'mapped',
+      message:
+        '<p-stepper>/<p-step-list>/<p-step>/<p-step-panels>/<p-step-panel> (v19 compositional API) → <nw-steps> — nw-steps is indicator-only, so step panel bodies were left in place; wire their visibility to activeIndex yourself',
+    });
+    imports.add('NwStepsComponent');
+  }
+
   // --- simple element adapters (opening transform + closing rename) ---
   const simpleAdapters: Adapter[] = [
     tabsAdapter,

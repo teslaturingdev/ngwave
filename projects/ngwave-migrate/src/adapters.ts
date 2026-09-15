@@ -1363,6 +1363,12 @@ const CANONICAL_SUPPORTED_PRIMENG_TAGS: string[] = [
   'p-tablist',
   'p-tab',
   'p-tabpanels',
+  // Stepper v19 compositional API (distinct from the legacy p-steps).
+  'p-stepper',
+  'p-step-list',
+  'p-step',
+  'p-step-panels',
+  'p-step-panel',
 ];
 
 /** Every casing alias (see primengTagAliases) of every tag this codemod supports. */
