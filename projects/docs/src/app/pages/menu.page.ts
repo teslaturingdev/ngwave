@@ -34,7 +34,7 @@ import {
           <div doc class="space-y-10">
             <docs-demo id="popup" title="Popup" [code]="popupCode">
               <nw-button label="Show menu" (click)="menu().toggle($event)" />
-              <nw-menu #menu [model]="items" [popup]="true" />
+              <nw-menu [model]="items" [popup]="true" />
             </docs-demo>
 
             <docs-demo id="inline" title="Inline" [code]="inlineCode">

@@ -37,7 +37,7 @@ import {
               >
                 Right-click here
               </div>
-              <nw-context-menu #menu [model]="items" />
+              <nw-context-menu [model]="items" />
             </docs-demo>
           </div>
 
