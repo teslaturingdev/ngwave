@@ -4,20 +4,23 @@ import { buildCostReport } from './cost-model';
 describe('buildCostReport', () => {
   it('marks tags with an @ngwave/migrate adapter as NgWave-supported, others not', () => {
     const report = buildCostReport([
-      { path: 'a.html', content: `<p-dropdown [options]="o"></p-dropdown><p-calendar></p-calendar>` },
+      {
+        path: 'a.html',
+        content: `<p-dropdown [options]="o"></p-dropdown><p-organizationChart></p-organizationChart>`,
+      },
     ]);
     const dropdown = report.rows.find((r) => r.tag === 'p-dropdown');
-    const calendar = report.rows.find((r) => r.tag === 'p-calendar');
+    const orgChart = report.rows.find((r) => r.tag === 'p-organizationChart');
     expect(dropdown?.ngwave.hasAdapter).toBe(true);
-    expect(calendar?.ngwave.hasAdapter).toBe(false);
+    expect(orgChart?.ngwave.hasAdapter).toBe(false);
   });
 
   it('computes an occurrence-weighted automated % for NgWave', () => {
-    // p-dropdown (supported) x2, p-calendar (unsupported) x1 → 2/3 supported by volume.
+    // p-dropdown (supported) x2, p-organizationChart (unsupported) x1 → 2/3 supported by volume.
     const report = buildCostReport([
       {
         path: 'a.html',
-        content: `<p-dropdown [options]="o"></p-dropdown><p-dropdown [options]="o"></p-dropdown><p-calendar></p-calendar>`,
+        content: `<p-dropdown [options]="o"></p-dropdown><p-dropdown [options]="o"></p-dropdown><p-organizationChart></p-organizationChart>`,
       },
     ]);
     expect(report.ngwaveSummary.automatedPct).toBe(67);

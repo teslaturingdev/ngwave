@@ -20,7 +20,8 @@ export async function readFileContents(files: CollectedFile[]): Promise<FileInpu
 }
 
 export const MAX_FILES = 500;
-const EXCLUDED_PATH_SEGMENTS = ['node_modules/', 'dist/', '.git/'];
+const EXCLUDED_DIR_NAMES = ['node_modules', 'dist', '.git'];
+const EXCLUDED_PATH_SEGMENTS = EXCLUDED_DIR_NAMES.map((name) => `${name}/`);
 
 /** Default relevance check: matches the given extension, skips common noise directories. */
 export function isRelevantPath(path: string, extension: string): boolean {
@@ -41,6 +42,10 @@ async function readDirEntry(
     return;
   }
   if (entry.isDirectory) {
+    // Prune noise directories before recursing, rather than walking them and
+    // filtering afterward — node_modules alone can be tens of thousands of
+    // entries, so skipping the recursion (not just the eventual file) matters.
+    if (EXCLUDED_DIR_NAMES.includes(entry.name)) return;
     const reader = (entry as FileSystemDirectoryEntry).createReader();
     let batch: FileSystemEntry[];
     do {
