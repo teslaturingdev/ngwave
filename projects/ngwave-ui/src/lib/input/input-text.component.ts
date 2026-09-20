@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  booleanAttribute,
   computed,
   forwardRef,
   input,
@@ -83,12 +84,12 @@ export class NwInputTextComponent implements ControlValueAccessor {
   readonly value = model('');
   readonly type = input<NwInputTextType>('text');
   readonly placeholder = input('');
-  readonly disabled = input(false);
-  readonly readonly = input(false);
-  readonly invalid = input(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
+  readonly readonly = input(false, { transform: booleanAttribute });
+  readonly invalid = input(false, { transform: booleanAttribute });
   readonly size = input<NwInputSize>('normal');
-  readonly clearable = input(false);
-  readonly fluid = input(false);
+  readonly clearable = input(false, { transform: booleanAttribute });
+  readonly fluid = input(false, { transform: booleanAttribute });
   readonly iconLeft = input('');
   readonly iconRight = input('');
   readonly inputId = input('');

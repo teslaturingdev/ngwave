@@ -5,6 +5,7 @@ import {
   Directive,
   ElementRef,
   TemplateRef,
+  booleanAttribute,
   computed,
   contentChild,
   forwardRef,
@@ -152,19 +153,19 @@ export class NwAutocompleteComponent implements ControlValueAccessor {
   /** Current suggestion list — update this in response to (complete). */
   readonly suggestions = input<unknown[]>([]);
   readonly optionLabel = input('');
-  readonly multiple = input(false);
-  readonly dropdown = input(false);
+  readonly multiple = input(false, { transform: booleanAttribute });
+  readonly dropdown = input(false, { transform: booleanAttribute });
   readonly minLength = input(1);
   readonly delay = input(300);
-  readonly forceSelection = input(false);
-  readonly clearable = input(false);
-  readonly loading = input(false);
+  readonly forceSelection = input(false, { transform: booleanAttribute });
+  readonly clearable = input(false, { transform: booleanAttribute });
+  readonly loading = input(false, { transform: booleanAttribute });
   readonly placeholder = input('');
   readonly emptyMessage = input('No results found');
-  readonly disabled = input(false);
-  readonly readonly = input(false);
-  readonly invalid = input(false);
-  readonly fluid = input(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
+  readonly readonly = input(false, { transform: booleanAttribute });
+  readonly invalid = input(false, { transform: booleanAttribute });
+  readonly fluid = input(false, { transform: booleanAttribute });
   readonly inputId = input('');
   readonly name = input('');
 

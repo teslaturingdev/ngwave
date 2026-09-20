@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  booleanAttribute,
   computed,
   forwardRef,
   input,
@@ -98,22 +99,22 @@ export class NwInputNumberComponent implements ControlValueAccessor {
   readonly min = input<number | null>(null);
   readonly max = input<number | null>(null);
   readonly step = input(1);
-  readonly showButtons = input(false);
+  readonly showButtons = input(false, { transform: booleanAttribute });
   readonly buttonLayout = input<NwButtonLayout>('stacked');
   readonly mode = input<NwInputNumberMode>('decimal');
   readonly currency = input('USD');
   readonly locale = input<string | undefined>(undefined);
   readonly minFractionDigits = input<number | null>(null);
   readonly maxFractionDigits = input<number | null>(null);
-  readonly useGrouping = input(true);
+  readonly useGrouping = input(true, { transform: booleanAttribute });
   readonly prefix = input('');
   readonly suffix = input('');
   readonly placeholder = input('');
-  readonly disabled = input(false);
-  readonly readonly = input(false);
-  readonly invalid = input(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
+  readonly readonly = input(false, { transform: booleanAttribute });
+  readonly invalid = input(false, { transform: booleanAttribute });
   readonly size = input<NwInputSize>('normal');
-  readonly fluid = input(false);
+  readonly fluid = input(false, { transform: booleanAttribute });
   readonly inputId = input('');
   readonly name = input('');
 
